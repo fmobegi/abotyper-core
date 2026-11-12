@@ -9,3 +9,4 @@ dist/
 .coverage
 # local dev helpers
 .dev_*.sh
+.dev_bioconda/

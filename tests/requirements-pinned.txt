@@ -1,0 +1,8 @@
+# Versions the golden outputs were produced with; they match the nf-core/abotyper module environments.
+numpy==2.5.3
+pandas==3.0.5
+pyyaml==6.0.3
+xlsxwriter==3.2.9
+openpyxl==3.1.5
+pytest==8.4.2
+ruff==0.14.4

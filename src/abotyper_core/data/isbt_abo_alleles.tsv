@@ -1,0 +1,209 @@
+# ISBT ABO alleles; isbt_release=21; applied=2026-11-01; fetched=2026-11-12; source=https://blooddatabase.isbtweb.org/system/ABO
+allele	phenotype	changes	exons	updated	obsolete	provisional
+ABO*A1.01	A1			2025-06-09	0	0
+ABO*A1.02	A1	c.467C>T	Exon 7	2026-04-02	0	0
+ABO*A2.01	A2	c.467C>T;c.1061del	Exon 7; Exon 7	2026-06-17	0	0
+ABO*A2.02	A2	c.1054C>T	Exon 7	2026-04-02	0	0
+ABO*A2.03	A2	c.1054C>G	Exon 7	2026-04-02	0	0
+ABO*A2.04	A2	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.771C>T;c.829G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*A2.05	A2	c.467C>T;c.1009A>G	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.06	A2	c.1061del	Exon 7	2026-06-17	0	0
+ABO*A2.07	A2	c.539G>C	Exon 7	2025-06-09	0	0
+ABO*A2.08	A2	c.467C>T;c.539G>C	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.09	A2	c.467C>T;c.527G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*A2.10	A2	c.268T>C;c.467C>T	Exon 6; Exon 7	2026-04-02	0	0
+ABO*A2.11	A2	c.266C>T;c.467C>T	Exon 6; Exon 7	2026-04-03	0	0
+ABO*A2.12	A2	c.190G>A;c.527G>A;c.1061del	Exon 4; Exon 7; Exon 7	2026-06-17	0	0
+ABO*A2.13	A2	c.467C>T;c.742C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.16	A2	c.106G>T;c.188G>A;c.189C>T;c.467C>T;c.1061del	Exon 3; Exon 4; Exon 4; Exon 7; Exon 7	2026-06-17	0	0
+ABO*A2.17	A2	c.407C>T;c.467C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.18	A2	c.467C>T;c.722G>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.19	A2	c.467C>T;c.778G>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A2.20	A2	c.467C>T;c.829G>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*A3.01	A3	c.871G>A	Exon 7	2026-04-02	0	0
+ABO*A3.02	A3	c.829G>A;c.1061del	Exon 7; Exon 7	2026-06-17	0	0
+ABO*A3.03	A3	c.838C>T	Exon 7	2026-04-03	0	0
+ABO*A3.04	A3	c.467C>T;c.539G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*A3.05	A3	c.820G>A	Exon 7	2026-04-03	0	0
+ABO*A3.06	A3	c.467C>T;c.820G>A	Exon 7; Exon 7	2026-04-03	0	0
+ABO*A3.07	A3	c.467C>T;c.745C>T	Exon 7; Exon 7	2026-04-03	0	0
+ABO*AEL.01	Ael	c.804dup	Exon 7	2026-06-17	0	0
+ABO*AEL.02	Ael	c.467C>T;c.646T>A;c.681G>A	Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*AEL.03	Ael	c.804del	Exon 7	2026-06-17	0	0
+ABO*AEL.04	Ael	c.374+5G>A	Intron 6	2026-04-03	0	0
+ABO*AEL.05	Ael	c.467C>T;c.767T>C	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AEL.06	Ael	c.425T>C;c.467C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AEL.07	Ael	c.467C>T;c.681G>A;c.771C>T;c.829G>A	Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*AEL.08	Ael	c.467C>T;c.804dup	Exon 7; Exon 7	2026-06-17	0	0
+ABO*AM.01	Am	c.467C>T;c.761C>T	Exon 7; Exon 7	2026-04-03	0	0
+ABO*AM.02	Am	c.664G>A	Exon 7	2026-04-03	0	0
+ABO*AW.01	Aweak	c.407C>T;c.467C>T;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.02	Aweak	c.350G>C;c.467C>T;c.1061del	Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.03	Aweak	c.203G>C;c.467C>T;c.1061del	Exon 4; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.04	Aweak	c.721C>T	Exon 7	2026-04-02	0	0
+ABO*AW.05	Aweak	c.965A>G	Exon 7	2025-06-09	0	0
+ABO*AW.06	Aweak	c.502C>G	Exon 7	2026-04-02	0	0
+ABO*AW.07	Aweak	c.467C>T;c.592C>T;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.08	Aweak	c.220C>T;c.297A>G;c.488C>T;c.526C>G;c.802G>A	Exon 5; Exon 6; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*AW.09	Aweak	c.46G>A;c.106G>T;c.188G>A;c.220C>T;c.467C>T;c.1061del	Exon 2; Exon 3; Exon 4; Exon 5; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.10	Aweak	c.784G>A	Exon 7	2026-04-03	0	0
+ABO*AW.11	Aweak	c.523G>A;c.721C>T	Exon 7; Exon 7	2026-04-03	0	0
+ABO*AW.12	Aweak	c.467C>T;c.556A>G	Exon 7; Exon 7	2026-04-03	0	0
+ABO*AW.13	Aweak	c.2T>C	Exon 1	2026-04-02	0	0
+ABO*AW.14	Aweak	c.467C>T;c.699C>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.15	Aweak	c.374+4A>T	Intron 6	2025-06-09	0	0
+ABO*AW.16	Aweak	c.1A>G;c.467C>T;c.1061del	Exon 1; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.17	Aweak	c.236C>T;c.467C>T;c.1061del	Exon 5; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.18	Aweak	c.347T>C;c.467C>T;c.1061del	Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.19	Aweak	c.434A>G;c.467C>T;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.20	Aweak	c.467C>T;c.607G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.21	Aweak	c.467C>T;c.607G>C;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.22	Aweak	c.467C>T;c.634G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.23	Aweak	c.467C>T;c.722G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.24	Aweak	c.467C>T;c.742C>T;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.25	Aweak	c.467C>T;c.829G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.26	Aweak	c.467C>T;c.527G>A;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.27	Aweak	c.527G>A;c.1061del	Exon 7; Exon 7	2026-06-17	0	0
+ABO*AW.28	Aweak	c.98+2T>C	Intron 2	2025-06-09	0	0
+ABO*AW.29	Aweak	c.311T>A	Exon 6	2026-04-03	0	0
+ABO*AW.30.01	Ax/Aweak	c.646T>A	Exon 7	2026-04-02	0	0
+ABO*AW.30.02	Ax/Aweak	c.646T>A;c.681G>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.31.01	Ax/Aweak	c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.31.02-05	Ax/Aweak	c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.32	Ax/Aweak	c.996G>A	Exon 7	2026-04-03	0	0
+ABO*AW.33	Ax/Aweak	c.467C>T;c.543G>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.34	Ax/Aweak	c.467C>T;c.829G>A;c.1009A>G	Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.35	Ax/Aweak	c.467C>T;c.860C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.36	Ax/Aweak	c.607G>A	Exon 7	2026-04-02	0	0
+ABO*AW.37	Ax/Aweak	c.940A>G	Exon 7	2026-04-03	0	0
+ABO*AW.38	Ax/Aweak	c.426G>C	Exon 7	2025-06-09	0	0
+ABO*AW.39	Ax/Aweak	c.385T>C	Exon 7	2025-06-09	0	0
+ABO*AW.40	Ax/Aweak	c.499G>T	Exon 7	2026-04-02	0	0
+ABO*AW.41	Ax/Aweak	c.370A>G	Exon 6	2025-06-09	0	0
+ABO*AW.42	Ax/Aweak	c.467C>T;c.905A>G	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.43	Ax/Aweak	c.467C>T;c.721C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*AW.44	Afinn/Aweak	c.374+4A>G	Intron 6	2026-04-02	0	0
+ABO*AW.45	Abantu/Aweak	c.203+1del;c.467C>T;c.1061del	Intron 4; Exon 7; Exon 7	2026-06-17	0	0
+ABO*B.01	B	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B.02	B	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.892G>T;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B.03	B	c.297A>G;c.526C>G;c.559C>T;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.01	B3	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.1054C>T	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.02	B3	c.297A>G;c.526C>G;c.646T>A;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.03	B3	c.155+5G>A;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Intron 3; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.04	B3	c.247G>T;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.05	B3	c.297A>G;c.425T>C;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.06	B3	c.297A>G;c.526C>G;c.547G>A;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.07	B3	c.297A>G;c.410C>T;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*B3.08	B3	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.938A>C	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.01	B(A)	c.297A>G;c.526C>G;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.02	B(A)	c.297A>G;c.526C>G;c.657C>T;c.700C>G;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.03	B(A)	c.297A>G;c.526C>G;c.657C>T;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.04	B(A)	c.297A>G;c.526C>G;c.640A>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.05	B(A)	c.297A>G;c.526C>G;c.641T>C;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BA.06	B(A)	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BEL.01	Bel	c.297A>G;c.526C>G;c.641T>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BEL.02	Bel	c.297A>G;c.526C>G;c.657C>T;c.669G>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BEL.03	Bel	c.297A>G;c.502C>T;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BEL.04	Bel	c.467C>T;c.646T>A;c.681G>A;c.771C>T;c.796C>A;c.803G>C;c.829G>A	Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*BEL.05	Bel	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.952G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.01	Bx/Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.871G>A;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.02	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.873C>G;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.03	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.721C>T;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.04	Bweak	c.297A>G;c.526C>G;c.548A>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.05	Bweak	c.297A>G;c.526C>G;c.539G>A;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.06	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.1036A>G	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.07	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.1055G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.08	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.863T>G;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.09	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.1037A>T	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.10	Bweak	c.297A>G;c.526C>G;c.556A>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.11	Bweak	c.297A>G;c.526C>G;c.657C>T;c.695T>C;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.12	Bweak	c.278C>T;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.14	Bweak	c.297A>G;c.523G>A;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.15	Bweak	c.297A>G;c.526C>G;c.565A>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.16	Bweak	c.297A>G;c.526C>G;c.575T>C;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.17	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.784G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.18	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.802G>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.19	Bweak	c.297A>G;c.526C>G;c.646T>A;c.657C>T;c.681G>A;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.20	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.816dup;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.21	Bweak	c.297A>G;c.526C>G;c.657C>T;c.688G>C;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.22	Bweak	c.297A>G;c.503G>T;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.23	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.743G>C;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.24	Bweak	c.297A>G;c.526C>G;c.558G>T;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.25	Bweak	c.103G>A;c.297A>G;c.526C>G;c.619C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 3; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.26	Bweak	c.53G>T;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 2; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.27	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.905A>G;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.28	Bweak	c.297A>G;c.526C>G;c.541T>C;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.29	Bweak	c.297A>G;c.526C>G;c.588C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.30	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A;c.976G>T	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.31	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.900G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.32	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.808T>A;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.33	Bweak	c.297A>G;c.526C>G;c.550G>A;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*BW.34	Bweak	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.889G>A;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.01.01	O	c.261del	Exon 6	2026-06-17	0	0
+ABO*O.01.02	O	c.106G>T;c.188G>A;c.189C>T;c.220C>T;c.261del;c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.04	O	c.261del;c.579T>C	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.05	O	c.261del;c.297A>G	Exon 6; Exon 6	2026-06-17	0	0
+ABO*O.01.06	O	c.261del;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.07	O	c.261del;c.297A>G;c.646T>A;c.681G>A;c.721C>T;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.09	O	c.261del;c.318C>T;c.467C>T	Exon 6; Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.10	O	c.261del;c.657C>T	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.11	O	c.261del;c.297A>G;c.542G>A;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.12	O	c.261del;c.297A>G;c.595C>T;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.13	O	c.261del;c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.22	O	c.261del;c.467C>T;c.1061del	Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.23	O	c.261del;c.297A>G;c.646T>A;c.771C>T;c.829G>A;c.1054C>T	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.24	O	c.106G>T;c.188G>A;c.189C>T;c.261del;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 3; Exon 4; Exon 4; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.25	O	c.261del;c.454T>C	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.26	O	c.261del;c.768C>A	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.27	O	c.261del;c.318C>T;c.467C>T;c.729C>T	Exon 6; Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.28	O	c.261del;c.926A>G	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.29	O	c.261del;c.318C>T	Exon 6; Exon 6	2026-06-17	0	0
+ABO*O.01.31	O	c.261del;c.297A>G;c.529G>A;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.32	O	c.261del;c.297A>G;c.538C>T;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.33	O	c.261del;c.297A>G;c.498C>T;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.34	O	c.261del;c.297A>G;c.351G>A;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.35	O	c.106G>T;c.188G>A;c.189C>T;c.220C>T;c.261del;c.297A>G;c.681G>A;c.771C>T;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.36	O	c.106G>T;c.188G>A;c.189C>T;c.220C>T;c.261del;c.297A>G;c.646T>A;c.681G>A;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.39	O	c.220C>T;c.261del;c.297A>G;c.681G>A;c.771C>T;c.829G>A	Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.40	O	c.106G>T;c.188G>A;c.189C>T;c.261del;c.297A>G;c.646T>A;c.681G>A;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.41	O	c.261del;c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.44	O	c.261del;c.297A>G;c.646T>A;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.45	O	c.261del;c.646T>A;c.771C>T	Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.46	O	c.261del;c.646T>A;c.771C>T;c.829G>A	Exon 6; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.56	O	c.261del;c.496del	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.57	O	c.261del;c.802G>A	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.58	O	c.261del;c.297A>G;c.646T>A;c.681G>A;c.687C>T;c.771C>T;c.829G>A	Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.61	O	c.261del;c.743G>C	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.67	O	c.103G>A;c.106G>T;c.188G>A;c.189C>T;c.220C>T;c.261del;c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 3; Exon 3; Exon 4; Exon 4; Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.68	O	c.106G>T;c.188G>A;c.189C>T;c.261del;c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.71	O	c.261del;c.829G>A	Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.01.75	O	c.106G>T;c.188G>A;c.189C>T;c.220C>T;c.261del;c.297A>G;c.542G>A;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 3; Exon 4; Exon 4; Exon 5; Exon 6; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.76	O	c.261del;c.579T>C;c.1046_1048del	Exon 6; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.01.82	O	c.190G>A;c.261del	Exon 4; Exon 6	2026-06-17	0	0
+ABO*O.01.83	O	c.106G>T;c.188G>A;c.261del;c.297A>G	Exon 3; Exon 4; Exon 6; Exon 6	2026-06-17	0	0
+ABO*O.02.01	O	c.53G>T;c.220C>T;c.297A>G;c.526C>G;c.802G>A	Exon 2; Exon 5; Exon 6; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.02.02	O	c.53G>T;c.220C>T;c.297A>G;c.526C>G;c.649C>T;c.689G>A;c.802G>A	Exon 2; Exon 5; Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.02.03	O	c.53G>T;c.220C>T;c.297A>G;c.526C>G;c.689G>A;c.802G>A	Exon 2; Exon 5; Exon 6; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.02.04	O	c.53G>T;c.220C>T;c.297A>G;c.488C>T;c.526C>G;c.802G>A	Exon 2; Exon 5; Exon 6; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.03	O	c.467C>T;c.804dup;c.1061del	Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.04.01	O	c.88dup	Exon 2	2025-06-09	0	0
+ABO*O.04.02	O	c.88dup;c.261del;c.467C>T	Exon 2; Exon 6; Exon 7	2026-06-17	0	0
+ABO*O.05	O	c.322C>T	Exon 6	2026-04-03	0	0
+ABO*O.06	O	c.542G>A	Exon 7	2026-04-03	0	0
+ABO*O.07	O	c.467C>T;c.893C>T	Exon 7; Exon 7	2026-04-02	0	0
+ABO*O.08	O	c.927C>A	Exon 7	2026-04-02	0	0
+ABO*O.09.01	O	c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*O.09.02	O	c.297A>G;c.646T>A;c.681G>A;c.771C>T;c.829G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0
+ABO*O.10	O	c.66_67insG	Exon 2	2025-06-09	0	0
+ABO*O.11	O	c.297A>G;c.506_508del;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-06-17	0	0
+ABO*O.12	O	c.297A>G;c.526C>G;c.563G>A;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*O.13	O	c.452T>G	Exon 7	2025-06-09	0	0
+ABO*O.14	O	c.635T>A	Exon 7	2025-06-09	0	0
+ABO*O.15	O	c.793T>C	Exon 7	2026-04-03	0	0
+ABO*O.16	O	c.106G>T;c.188G>A;c.204-98_*3252del	Exon 3; Exon 4; Intron 4-Exon 7	2026-07-20	0	0
+ABO*cisAB.01	cisAB	c.467C>T;c.803G>C	Exon 7; Exon 7	2026-04-02	0	0
+ABO*cisAB.02	cisAB	c.526C>G;c.657C>T;c.703G>A;c.803G>C	Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*cisAB.03	cisAB	c.297A>G;c.526C>G;c.657C>T;c.700C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*cisAB.04	cisAB	c.467C>T;c.796C>A	Exon 7; Exon 7	2026-04-02	0	0
+ABO*cisAB.05	cisAB	c.297A>G;c.526C>G;c.657C>T;c.703G>A;c.796C>A;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-03	0	0
+ABO*cisAB.06	cisAB	c.297A>G;c.657C>T;c.703G>A;c.796C>A;c.803G>C;c.930G>A	Exon 6; Exon 7; Exon 7; Exon 7; Exon 7; Exon 7	2026-04-02	0	0

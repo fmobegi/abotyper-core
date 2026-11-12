@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "abotyper-core"
+dynamic = ["version"]
+description = "ABO blood group typing logic from long-read amplicon data, as used by nf-core/abotyper"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+authors = [{ name = "Fredrick M. Mobegi" }]
+keywords = ["ABO", "blood group", "genotyping", "ISBT", "nanopore", "bioinformatics"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "xlsxwriter>=3.1",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "openpyxl>=3.1", "ruff>=0.14"]
+
+[project.urls]
+Homepage = "https://github.com/fmobegi/abotyper-core"
+Pipeline = "https://github.com/nf-core/abotyper"
+Publication = "https://pubmed.ncbi.nlm.nih.gov/40564908/"
+
+[project.scripts]
+# one command per pipeline step
+abotyper-panel = "abotyper_core.panel:main"
+abotyper-panel-to-bed = "abotyper_core.panel_to_bed:main"
+abotyper-clair2metrics = "abotyper_core.clair2metrics:main"
+abotyper-clair2haplotypes = "abotyper_core.clair2haplotypes:main"
+abotyper-pileup2metrics = "abotyper_core.pileup2metrics:main"
+abotyper-predict-phenotype = "abotyper_core.predict_phenotype:main"
+abotyper-aggregate = "abotyper_core.aggregate:main"
+abotyper-calibrate-panel = "abotyper_core.calibrate_panel:main"
+abotyper-rename-samples = "abotyper_core.rename_samples:main"
+# the script names nf-core/abotyper calls today, so its modules can switch to the package unchanged
+"abo_panel.py" = "abotyper_core.panel:main"
+"panel_to_bed.py" = "abotyper_core.panel_to_bed:main"
+"clair2metrics.py" = "abotyper_core.clair2metrics:main"
+"clair2haplotypes.py" = "abotyper_core.clair2haplotypes:main"
+"pileup2metrics.py" = "abotyper_core.pileup2metrics:main"
+"predict_abo_phenotype.py" = "abotyper_core.predict_phenotype:main"
+"aggregate_abo_reports.py" = "abotyper_core.aggregate:main"
+
+[tool.hatch.version]
+path = "src/abotyper_core/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/abotyper_core"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/abotyper_core", "tests", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B006", "B008", "B904"]

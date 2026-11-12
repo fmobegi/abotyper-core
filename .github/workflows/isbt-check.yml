@@ -1,0 +1,38 @@
+name: ISBT check
+
+# Monthly: compare the bundled panel with the live ISBT ABO allele table and open an issue with the suggestions.
+on:
+  schedule:
+    - cron: "0 3 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - name: Compare with ISBT
+        id: check
+        run: |
+          set +e
+          abotyper-panel --check-isbt --fail-on-changes --isbt-report isbt_suggestions.tsv > isbt_check.txt
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+          cat isbt_check.txt
+      - name: Open an issue
+        if: steps.check.outputs.status == '3'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "The monthly ISBT check suggests panel updates. Review before changing the panel."; echo; echo '```'; cat isbt_check.txt; echo '```'; } > body.md
+          gh issue create --title "ISBT allele table changed: panel review suggested ($(date +%Y-%m))" --body-file body.md
+      - name: Fail on a fetch error
+        if: steps.check.outputs.status != '0' && steps.check.outputs.status != '3'
+        run: exit 1

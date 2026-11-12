@@ -1,8 +1,7 @@
-"""Convert a Clair3 gVCF into an AlignmentStatistics.tsv table (command abotyper-clair2metrics, also
-installed as clair2metrics.py).
+"""Convert a Clair3 gVCF into an AlignmentStatistics.tsv table (command abotyper-clair2metrics).
 
 The table has the AlignmentStatistics.tsv format pysam_haploscan.py / stats_from_pileup.py
-produce, so predict_abo_phenotype.py / aggregate_abo_reports.py can
+produce, so abotyper-predict-phenotype / abotyper-aggregate can
 consume Clair3 calls with zero changes to their scoring logic.
 
 Only the panel's calibrated diagnostic positions are emitted (not a

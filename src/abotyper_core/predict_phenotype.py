@@ -1,5 +1,4 @@
-"""Per-sample ABO phenotype report from the panel positions (command abotyper-predict-phenotype, also
-installed as predict_abo_phenotype.py).
+"""Per-sample ABO phenotype report from the panel positions (command abotyper-predict-phenotype).
 
 All diagnostic positions and their interpretation text are loaded from an
 external variant panel (--panel, default abo_variant_panel.yaml); add a new
@@ -324,7 +323,7 @@ class ABOPhenotypePredictor:
         if pos is None:
             self.logger.debug(
                 f"Skipping {marker.id} ({marker.cdna_change}): no resolved "
-                f"position yet (needs calibrate_panel_positions.py or a "
+                f"position yet (needs abotyper-calibrate-panel or a "
                 f"legacy coordinate)."
             )
             return

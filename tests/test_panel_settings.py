@@ -18,7 +18,7 @@ def aggregate_with(panel_data, tmp_path, chain):
     """Rerun the aggregation of the 10 samples with another panel; return final_export.csv and ABO_result.txt."""
     p = tmp_path / "panel.yaml"
     p.write_text(yaml.safe_dump(panel_data, sort_keys=False), encoding="utf-8")
-    run("aggregate_abo_reports.py", STATE["aggregate_dir"] / "per_sample_processing", "--panel", p, "--threads", "1",
+    run("abotyper-aggregate", STATE["aggregate_dir"] / "per_sample_processing", "--panel", p, "--threads", "1",
         "--qc-report", "", cwd=tmp_path)
     return (tmp_path / "final_export.csv").read_text(encoding="utf-8"), (tmp_path / "ABO_result.txt").read_text(encoding="utf-8")
 

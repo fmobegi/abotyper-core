@@ -1,7 +1,6 @@
-"""Convert a Clair3 phased VCF into a Haplotypes.tsv table (command abotyper-clair2haplotypes, also
-installed as clair2haplotypes.py).
+"""Convert a Clair3 phased VCF into a Haplotypes.tsv table (command abotyper-clair2haplotypes).
 
-The table has the format pysam_haploscan.py produced, so aggregate_abo_reports.py's
+The table has the format pysam_haploscan.py produced, so abotyper-aggregate's
 existing PhaseConfidence scoring (parse_haplotypes_tsv / compute_phase_confidence)
 works unchanged against Clair3 phasing.
 

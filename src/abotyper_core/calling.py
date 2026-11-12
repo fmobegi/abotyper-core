@@ -76,7 +76,7 @@ class CallingMixin:
     @staticmethod
     def _no_evidence_row(row_values: dict) -> bool:
         """True when a position carries no evidence at all: Mat, Mis, Ins and Del are all zero.
-        That is what clair2metrics.py (>=1.1.0) writes for a position nothing covers, and what
+        That is what abotyper-clair2metrics writes for a position nothing covers, and what
         parse_exon_report() zero-fills for a position missing from the report. Typing such a row
         would invent a call: both the ref and alt fractions are 0, so the biallelic caller reads
         it as heterozygous, and the named-marker caller reads "100% non-reference" as a variant."""
@@ -929,7 +929,7 @@ class CallingMixin:
             m = self.panel.get(marker_id)
             if m is not None and m.resolved_position() is not None:
                 ids[key] = m.resolved_position()
-        # clair2haplotypes.py drops homozygous positions (the same on both sides), so a position both alleles need
+        # abotyper-clair2haplotypes drops homozygous positions (the same on both sides), so a position both alleles need
         # (c.261delG in an O1/O1 sample) belongs to both haplotypes even though neither string lists it
         needs = [self._TOKEN_NEEDS.get(tok, set()) for tok in tokens]
         for key in needs[0] & needs[1]:

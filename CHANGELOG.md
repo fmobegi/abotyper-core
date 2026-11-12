@@ -8,6 +8,9 @@
 - Every module has the same header: a docstring that names its command, ending with the package, author and
   licence lines. The per-module `__author__`/`__credits__`/`__version__` fields are removed.
 - The bundled panel's `isbt_coverage_table` field points at the copy in the package.
+- The `.py` command aliases (`abo_panel.py`, `panel_to_bed.py`, `clair2metrics.py`, `clair2haplotypes.py`,
+  `pileup2metrics.py`, `predict_abo_phenotype.py`, `aggregate_abo_reports.py`) are removed; the package installs
+  only the nine `abotyper-*` commands. nf-core/abotyper calls these commands.
 
 ## 0.2.0 (2026-11-12)
 

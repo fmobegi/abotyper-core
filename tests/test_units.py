@@ -160,3 +160,12 @@ def test_window_marker_ignores_a_nearby_snp():
     marker = SimpleNamespace(variant_type="indel", ref_base="REF")
     assert not c2h.record_fits_marker(rec(24288, "G", ["C"], (0, 1), [10, 10]), marker, 24289)
     assert c2h.record_fits_marker(rec(24288, "GG", ["G"], (0, 1), [10, 10]), marker, 24289)
+
+
+def test_commands_installed():
+    """The package installs the nine abotyper-* commands and nothing else (no .py aliases on PATH)."""
+    from importlib.metadata import entry_points
+    names = {ep.name for ep in entry_points(group="console_scripts") if ep.value.startswith("abotyper_core.")}
+    assert names == {"abotyper-panel", "abotyper-panel-to-bed", "abotyper-clair2metrics", "abotyper-clair2haplotypes",
+                     "abotyper-pileup2metrics", "abotyper-predict-phenotype", "abotyper-aggregate",
+                     "abotyper-calibrate-panel", "abotyper-rename-samples"}

@@ -5,15 +5,15 @@
 # ===========================================================================
 #
 # This file is the SINGLE SOURCE OF TRUTH for every diagnostic position used
-# by the abotyper pipeline (panel_to_bed.py, clair2metrics.py,
-# clair2haplotypes.py, predict_abo_phenotype.py, aggregate_abo_reports.py).
+# by the abotyper pipeline (abotyper-panel-to-bed, abotyper-clair2metrics,
+# abotyper-clair2haplotypes, abotyper-predict-phenotype, abotyper-aggregate).
 #
 # Adding a new variant to the assay = adding a row here. No script needs to
 # be edited or redeployed.
 #
 # An equivalent flat table lives in abo_variant_panel.csv (same content,
 # generated from this file) for lab staff who prefer to review/edit variants
-# in Excel. abo_panel.py can load either format interchangeably — pass
+# in Excel. abotyper-panel can load either format interchangeably — pass
 # whichever you prefer with --panel.
 #
 # ---------------------------------------------------------------------------
@@ -42,7 +42,7 @@
 #       durable identifier when discussing variants with the ISBT table.
 #
 # ---------------------------------------------------------------------------
-# call_rule  (how aggregate_abo_reports.py / predict_abo_phenotype.py score it)
+# call_rule  (how abotyper-aggregate / abotyper-predict-phenotype score it)
 # ---------------------------------------------------------------------------
 #   primary_biallelic
 #       Used for the handful of true ABO-type-defining positions (O1, A/B
@@ -62,7 +62,7 @@
 #       "<Confirmed|Possible> <subtype_label>(<cdna_change>:<alt>=<pct>%)".
 #       Confirmed if >=80%, Possible otherwise. category groups markers for
 #       the generic scan_category_markers() scanner in
-#       aggregate_abo_reports.py.
+#       abotyper-aggregate.
 #
 # ---------------------------------------------------------------------------
 # category values
@@ -752,7 +752,7 @@ variants:
     notes: >
       Critical for cisAB/B(A) forward-typing-discrepancy workups. Scan
       both alt bases separately (G and T give different subtypes) — see
-      abo_panel.py scan_category_markers() multi-alt handling.
+      abotyper-panel scan_category_markers() multi-alt handling.
     source: ISBT_v9
 
   - id: ba_640

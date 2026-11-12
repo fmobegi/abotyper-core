@@ -1,10 +1,10 @@
-"""Variant-panel loader and scoring engine (command abotyper-panel, also installed as abo_panel.py).
+"""Variant-panel loader and scoring engine (command abotyper-panel).
 
 This module is the ONLY place that understands the panel file format
 (abo_variant_panel.yaml / .yml / .json / .csv / .tsv). Every
-position-consuming script (panel_to_bed.py, clair2metrics.py,
-clair2haplotypes.py, predict_abo_phenotype.py, aggregate_abo_reports.py,
-calibrate_panel_positions.py) imports this module instead of hardcoding
+position-consuming script (abotyper-panel-to-bed, abotyper-clair2metrics,
+abotyper-clair2haplotypes, abotyper-predict-phenotype, abotyper-aggregate,
+abotyper-calibrate-panel) imports this module instead of hardcoding
 position dictionaries.
 
 Adding a new diagnostic variant to the assay requires editing ONLY the
@@ -188,7 +188,7 @@ class VariantMarker:
 
     def column_label(self) -> str:
         """
-        Column header used in aggregate_abo_reports.py output. Preserves
+        Column header used in abotyper-aggregate output. Preserves
         the exact legacy naming ("Exon7_pos422") for backward compatibility
         with any LIS/Excel integration already built around it; falls back
         to a cDNA-based label for positions that don't have one yet.
@@ -471,7 +471,7 @@ def export_csv(panel: Panel, out_path: Union[str, Path]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Scoring engines — shared by predict_abo_phenotype.py / aggregate_abo_reports.py
+# Scoring engines — shared by abotyper-predict-phenotype / abotyper-aggregate
 # ---------------------------------------------------------------------------
 
 def _pct_lookup(row_values: Dict[str, float], base: str) -> float:
@@ -621,7 +621,7 @@ def main():
         n_cal = len(panel.calibrated())
         n_unc = len(panel.uncalibrated())
         print(f"\nCalibrated positions (usable now): {n_cal}")
-        print(f"Uncalibrated positions (awaiting calibrate_panel_positions.py "
+        print(f"Uncalibrated positions (awaiting abotyper-calibrate-panel "
               f"or a legacy exon6/7 coordinate): {n_unc}")
         if n_unc:
             print("  " + ", ".join(v.id for v in panel.uncalibrated()))

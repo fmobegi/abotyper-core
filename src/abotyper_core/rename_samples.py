@@ -29,7 +29,7 @@ class SampleRenamer:
     REQUIRED_COLUMNS = ["Acc#", "Patient Name"]
     MIN_READ_THRESHOLD = 20
     SAMPLE_ID_PATTERN = r"(.+)_barcode\d+$"
-    # Added to final_export.csv by aggregate_abo_reports.py 2.1.0. Kept in the
+    # Added to final_export.csv by abotyper-aggregate. Kept in the
     # with-sequencingAcc file; dropped from the MatchPoint file unless asked for.
     QC_COLUMNS = ["QC Status", "QC Flags", "A2 Trace", "Evidence Basis"]
 

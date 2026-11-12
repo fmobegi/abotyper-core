@@ -1,8 +1,7 @@
-"""Two lines of evidence for the ABO panel, Clair3 and the BAM pileup (command abotyper-pileup2metrics, also
-installed as pileup2metrics.py).
+"""Two lines of evidence for the ABO panel, Clair3 and the BAM pileup (command abotyper-pileup2metrics).
 
 Reads a `samtools mpileup` text file taken over the panel positions, turns it into the
-same per-position table clair2metrics.py writes from a Clair3 gVCF
+same per-position table abotyper-clair2metrics writes from a Clair3 gVCF
 (*.AlignmentStatistics.tsv), and compares the two at every panel position.
 
 Outputs (only --merged-out is required):
@@ -25,7 +24,7 @@ BAM_ONLY | NONE.
 
 Pileup rows are noisier than Clair3's model-filtered calls, particularly for ONT
 homopolymer indels, so disagreement is reported and, at the primary typing markers,
-sent to review by aggregate_abo_reports.py rather than silently resolved. Indel-like
+sent to review by abotyper-aggregate rather than silently resolved. Indel-like
 markers use a +-2bp window (alignment of a deletion inside a homopolymer is not unique);
 SNP markers are exact.
 
@@ -229,7 +228,7 @@ def main() -> int:
     ap.add_argument("-p", "--pileup", required=True, help="samtools mpileup output over the panel positions (plain or bgzipped)")
     ap.add_argument("--panel", default=str(default_panel_path()))
     ap.add_argument("--clair-metrics", default=None,
-                     help="clair2metrics.py AlignmentStatistics.tsv; omit when Clair3 produced no gVCF")
+                     help="abotyper-clair2metrics AlignmentStatistics.tsv; omit when Clair3 produced no gVCF")
     ap.add_argument("--merged-out", required=True)
     ap.add_argument("--pileup-out", default=None)
     ap.add_argument("--concordance-out", default=None)

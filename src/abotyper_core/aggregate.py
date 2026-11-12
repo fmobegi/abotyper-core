@@ -1,6 +1,6 @@
 """Aggregate the per-sample ABO reports into the run result tables: ABO_result.txt/.xlsx, final_export.csv,
 the run QC report and the MultiQC evidence table (command abotyper-aggregate, also installed as
-aggregate_abo_reports.py).
+abotyper-aggregate).
 
 Column layout, per-position parsing, and subtype-marker scanning are driven
 by an external variant panel (--panel, default abo_variant_panel.yaml) via
@@ -45,7 +45,7 @@ a 6,218-sample run and from reading the upstream converters:
   * A subtype contradicted by evidence (A1 with an A2-lineage marker, A2 with
     no primary A2 marker) and A1 calls made on very few reads.
   * Missing evidence. A position absent from the report is zero-filled, and
-    clair2metrics.py >= 1.1.0 writes an all-zero row for a position nothing
+    abotyper-clair2metrics writes an all-zero row for a position nothing
     covers. Before 2.1.0 such a row was typed as a call (heterozygous at a
     SNP primary, "variant" at a named marker) and ReadReliability ignored
     zero-read positions. Now a zero row gives no call at that position (so a
@@ -53,7 +53,7 @@ a 6,218-sample run and from reading the upstream converters:
     Low", the position is listed in QCFlags and EvidenceBasis = "no data".
   * Reference-only calls. A genotype made only because no variant was seen at
     any primary position (EvidenceBasis = "reference-only") cannot be told
-    apart from a failed call. clair2metrics.py writes 100% reference with the
+    apart from a failed call. abotyper-clair2metrics writes 100% reference with the
     sample median depth when a position has neither a variant record nor a
     gVCF reference block, so this needs the run-level checks below.
   * Marker inconsistency: c.796 and c.803 are both B-defining and must
@@ -142,7 +142,7 @@ class ABOReportParser(CallingMixin, ReportMixin):
     and generates an Excel worksheet and a CSV file for export to LIS soft
     or other general purpose lab management systems. Column layout, position
     parsing, and subtype marker scanning are driven by an external variant
-    panel (see abo_panel.py).
+    panel (see abotyper-panel).
     """
 
     def __init__(self, input_dir, panel: Panel, default_barcode="barcode00",
@@ -896,14 +896,13 @@ class ABOReportParser(CallingMixin, ReportMixin):
 
 def create_argument_parser():
     parser = argparse.ArgumentParser(
-        prog="aggregate_abo_reports.py",
         description="ABO Blood Group Report Aggregator — Combines individual sample ABO phenotype results into unified reports.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 EXAMPLES:
-  python aggregate_abo_reports.py /path/to/results
-  python aggregate_abo_reports.py /path/to/results --panel abo_variant_panel.yaml
-  python aggregate_abo_reports.py /path/to/results --default-barcode barcode99 --verbose
+  abotyper-aggregate /path/to/results
+  abotyper-aggregate /path/to/results --panel abo_variant_panel.yaml
+  abotyper-aggregate /path/to/results --default-barcode barcode99 --verbose
 
 EXPECTED DIRECTORY STRUCTURE (one subfolder per exon PRESENT IN THE PANEL,
 not just exon6/exon7 -- e.g. once calibrated, exon2/exon3/exon4/exon5

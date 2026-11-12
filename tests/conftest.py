@@ -22,10 +22,10 @@ SAMPLES = sorted(p.name for p in DATA.iterdir() if p.is_dir())
 UPDATE = os.environ.get("UPDATE_GOLDEN") == "1"
 STATE = {}   # paths produced by the session's chain run, for tests that rerun one step with other settings
 
-# the script names nf-core/abotyper calls -> package modules
-MODULE = {"panel_to_bed.py": "panel_to_bed", "clair2metrics.py": "clair2metrics", "clair2haplotypes.py": "clair2haplotypes",
-          "pileup2metrics.py": "pileup2metrics", "predict_abo_phenotype.py": "predict_phenotype",
-          "aggregate_abo_reports.py": "aggregate"}
+# the commands nf-core/abotyper calls -> package modules
+MODULE = {"abotyper-panel-to-bed": "panel_to_bed", "abotyper-clair2metrics": "clair2metrics",
+          "abotyper-clair2haplotypes": "clair2haplotypes", "abotyper-pileup2metrics": "pileup2metrics",
+          "abotyper-predict-phenotype": "predict_phenotype", "abotyper-aggregate": "aggregate"}
 
 
 def run(script, *args, cwd):
@@ -64,22 +64,22 @@ def chain(tmp_path_factory):
     """Run every Python step of the pipeline on the 10 fixture samples; return {relative name: text}."""
     tmp = tmp_path_factory.mktemp("chain")
     out = {}
-    run("panel_to_bed.py", "--panel", PANEL, "--output", "abo_variant_panel.bed", cwd=tmp)
+    run("abotyper-panel-to-bed", "--panel", PANEL, "--output", "abo_variant_panel.bed", cwd=tmp)
     out["abo_variant_panel.bed"] = (tmp / "abo_variant_panel.bed").read_text(encoding="utf-8")
     agg = tmp / "aggregate"
     for s in SAMPLES:
         d = DATA / s
         w = tmp / s
         w.mkdir()
-        run("clair2metrics.py", "-i", d / f"{s}_clair3.merge_output.gvcf.gz", "-o", f"{s}.clair.AlignmentStatistics.tsv",
+        run("abotyper-clair2metrics", "-i", d / f"{s}_clair3.merge_output.gvcf.gz", "-o", f"{s}.clair.AlignmentStatistics.tsv",
             "--panel", PANEL, cwd=w)
-        run("clair2haplotypes.py", "-i", d / f"{s}_clair3.phased_merge_output.vcf.gz", "-o", f"{s}.Haplotypes.tsv",
+        run("abotyper-clair2haplotypes", "-i", d / f"{s}_clair3.phased_merge_output.vcf.gz", "-o", f"{s}.Haplotypes.tsv",
             "--panel", PANEL, cwd=w)
-        run("pileup2metrics.py", "--pileup", d / f"{s}.pileup.txt", "--clair-metrics", f"{s}.clair.AlignmentStatistics.tsv",
+        run("abotyper-pileup2metrics", "--pileup", d / f"{s}.pileup.txt", "--clair-metrics", f"{s}.clair.AlignmentStatistics.tsv",
             "--panel", PANEL, "--sample", s, "--merged-out", f"{s}.AlignmentStatistics.tsv",
             "--pileup-out", f"{s}.pileup_metrics.tsv", "--concordance-out", f"{s}.concordance.tsv",
             "--status-out", f"{s}.evidence_status.tsv", cwd=w)
-        run("predict_abo_phenotype.py", "-i", f"{s}.AlignmentStatistics.tsv", "-o", f"{s}.ABOPhenotype.txt",
+        run("abotyper-predict-phenotype", "-i", f"{s}.AlignmentStatistics.tsv", "-o", f"{s}.ABOPhenotype.txt",
             "-c", d / f"{s}.coverage.txt", "--panel", PANEL, cwd=w)
         for f in ("clair.AlignmentStatistics.tsv", "Haplotypes.tsv", "AlignmentStatistics.tsv", "pileup_metrics.tsv",
                   "concordance.tsv", "evidence_status.tsv", "ABOPhenotype.txt"):
@@ -91,7 +91,7 @@ def chain(tmp_path_factory):
             shutil.copy(w / f"{s}.{f}", c)
         for f in ("coverage.txt", "stats", "flagstat"):
             shutil.copy(d / f"{s}.{f}", c)
-    run("aggregate_abo_reports.py", "per_sample_processing", "--panel", PANEL, "--threads", "1", cwd=agg)
+    run("abotyper-aggregate", "per_sample_processing", "--panel", PANEL, "--threads", "1", cwd=agg)
     STATE["aggregate_dir"] = agg
     for f in ("ABO_result.txt", "final_export.csv", "ABO_run_qc.txt", "ABO_evidence_summary_mqc.tsv"):
         out[f"aggregate/{f}"] = (agg / f).read_text(encoding="utf-8")

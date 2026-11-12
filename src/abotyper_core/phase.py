@@ -98,7 +98,7 @@ def phase_relationship(evidence: Optional[PhaseEvidence], pos_a: int, pos_b: int
     haplotype-string keys already parsed into evidence.haplotype_counts
     (each string lists every ALT-carrying panel position on that side,
     e.g. "p23952=T;p24544=del" -- see ReadHaplotype.to_string() /
-    clair2haplotypes.py). Advisory only: this does not feed genotype
+    abotyper-clair2haplotypes). Advisory only: this does not feed genotype
     scoring, it only informs warning text.
 
     Returns "cis", "trans", "ambiguous", or "unknown" (not enough phased

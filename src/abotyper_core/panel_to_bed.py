@@ -1,5 +1,5 @@
 """BED file of the diagnostic positions of the ABO variant panel, for Clair3's --bed_fn and bcftools view -R
-(command abotyper-panel-to-bed, also installed as panel_to_bed.py).
+(command abotyper-panel-to-bed).
 
 Every calibrated panel row becomes one BED interval anchored on its
 resolved_position() (amplicon_pos, falling back to ng006669_2_pos / legacy

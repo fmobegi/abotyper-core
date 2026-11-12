@@ -66,13 +66,6 @@ repository's monthly `ISBT check` workflow opens an issue when there is somethin
 The ISBT site has no documented allele API: the check reads the allele records the ABO page embeds, and fails
 with a clear message if the page layout changes. `--isbt-source` with an export file always works.
 
-### Legacy names
-
-The package also installs the script names the pipeline's modules call today (`abo_panel.py`, `panel_to_bed.py`,
-`clair2metrics.py`, `clair2haplotypes.py`, `pileup2metrics.py`, `predict_abo_phenotype.py`,
-`aggregate_abo_reports.py`), so the pipeline can switch from its `bin/` scripts to this package without changing
-module scripts.
-
 ## Library use
 
 ```python

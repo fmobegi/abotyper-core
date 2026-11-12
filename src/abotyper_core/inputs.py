@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Readers for the per-sample files the aggregation uses besides the phenotype report: samtools stats/flagstat/coverage, the ABO_EVIDENCE status file, NanoPlot NanoStats and the controls table.
+"""Readers for the per-sample files the aggregation uses besides the phenotype report: samtools stats/flagstat/coverage, the ABO_EVIDENCE status file, NanoPlot NanoStats and the sample table.
 
 Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
 tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
@@ -8,6 +8,7 @@ tested on its own. This file is part of nf-core/abotyper and is released under t
 from __future__ import annotations
 
 import glob
+import gzip
 import os
 import re
 from typing import Dict, Optional
@@ -223,23 +224,39 @@ def find_nanostats(sample_dir: str, nanoplot_dir: Optional[str], sample_name: st
     return None
 
 
-def read_controls(path: Optional[str]) -> Dict[str, str]:
-    """Controls declared in the samplesheet: {sample id: 'negative' | 'positive'}.
+def open_text(path):
+    """Open a text file for reading, gzip/bgzip-compressed or not (detected from the magic bytes)."""
+    with open(path, "rb") as fh:
+        magic = fh.read(2)
+    if magic == b"\x1f\x8b":
+        return gzip.open(path, "rt", encoding="utf-8")
+    return open(path, "r", encoding="utf-8")
 
-    Two tab-separated columns (sample id, control type); an empty type marks a sample.
+
+def read_samples(path: Optional[str]) -> Dict[str, Dict[str, str]]:
+    """The sample table from the samplesheet: {sample id: {"control", "sample", "barcode"}}.
+
+    Tab-separated, one row per sample id: id, control type ('negative', 'positive' or empty) and,
+    optionally, the sample name and barcode to report. When name and barcode are both empty, they are
+    taken from the sample id (see ABOReportParser.extract_sample_info).
     """
-    controls: Dict[str, str] = {}
+    samples: Dict[str, Dict[str, str]] = {}
     if not path:
-        return controls
+        return samples
     with open(path, encoding="utf-8") as fh:
         for n, line in enumerate(fh, start=1):
             if not line.strip():
                 continue
-            parts = line.rstrip("\n").split("\t")
-            sample = parts[0].strip()
-            kind = parts[1].strip().lower() if len(parts) > 1 else ""
+            parts = [p.strip() for p in line.rstrip("\n").split("\t")] + ["", "", ""]
+            sample_id, kind, name, barcode = parts[0], parts[1].lower(), parts[2], parts[3]
             if kind not in ("", "negative", "positive"):
                 raise ValueError(f"{path} line {n}: control must be empty, 'negative' or 'positive', got '{kind}'")
-            if kind:
-                controls[sample] = kind
-    return controls
+            if barcode and not re.fullmatch(r"(barcode)?\d+", barcode, re.IGNORECASE):
+                raise ValueError(f"{path} line {n}: barcode must be a number or barcode<number>, got '{barcode}'")
+            samples[sample_id] = {"control": kind, "sample": name, "barcode": barcode}
+    return samples
+
+
+def read_controls(path: Optional[str]) -> Dict[str, str]:
+    """Controls declared in the samplesheet: {sample id: 'negative' | 'positive'} (see read_samples)."""
+    return {sid: row["control"] for sid, row in read_samples(path).items() if row["control"]}

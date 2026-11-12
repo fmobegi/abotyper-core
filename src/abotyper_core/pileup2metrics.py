@@ -41,6 +41,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from .inputs import open_text
 from .panel import load_panel, VariantMarker, default_panel_path
 
 # Authorship and licence: provided as part of the nf-core/abotyper pipeline.
@@ -130,8 +131,9 @@ def parse_pileup_line(line: str) -> Optional[Tuple[str, int, PileupColumn]]:
 
 
 def load_pileup(path: Path) -> Dict[int, PileupColumn]:
+    """Columns of a samtools mpileup file, plain or bgzipped (as the nf-core samtools/mpileup module writes it)."""
     cols: Dict[int, PileupColumn] = {}
-    with open(path, "r", encoding="utf-8") as fh:
+    with open_text(path) as fh:
         for line in fh:
             parsed = parse_pileup_line(line)
             if parsed:
@@ -238,7 +240,7 @@ def read_table(path: Path) -> Dict[int, List[str]]:
 def main() -> int:
     ap = argparse.ArgumentParser(
         description="Combine Clair3 and BAM-pileup evidence for the ABO panel positions.")
-    ap.add_argument("-p", "--pileup", required=True, help="samtools mpileup output over the panel positions")
+    ap.add_argument("-p", "--pileup", required=True, help="samtools mpileup output over the panel positions (plain or bgzipped)")
     ap.add_argument("--panel", default=str(default_panel_path()))
     ap.add_argument("--clair-metrics", default=None,
                      help="clair2metrics.py AlignmentStatistics.tsv; omit when Clair3 produced no gVCF")

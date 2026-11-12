@@ -29,7 +29,7 @@ Python 3.11 or newer. Dependencies: pandas, numpy, pyyaml, xlsxwriter and openpy
 | `abotyper-panel-to-bed` | BED of panel positions for Clair3 `--bed_fn` and `bcftools view -R` |
 | `abotyper-clair2metrics` | Per-position metrics from Clair3 VCFs |
 | `abotyper-clair2haplotypes` | Phased haplotypes from Clair3 VCFs |
-| `abotyper-pileup2metrics` | Per-position metrics from BAM pileups |
+| `abotyper-pileup2metrics` | Per-position metrics from BAM pileups (plain or bgzipped `samtools mpileup` output) |
 | `abotyper-predict-phenotype` | Phenotype, genotype and ISBT allele calls per sample |
 | `abotyper-aggregate` | Aggregate per-sample results into the final report (xlsx, csv) |
 | `abotyper-calibrate-panel` | Fill amplicon coordinates into a panel from a reference |

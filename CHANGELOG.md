@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 (2026-11-12)
+
+- `pileup2metrics` reads bgzipped pileups (`*.mpileup.gz`, as written by the nf-core `samtools/mpileup` module)
+  as well as plain ones.
+- `aggregate` (2.6.0) takes a sample table, `--samples` (the former `--controls`, which still works): sample
+  folder name, control type and, optionally, the sample name and barcode to report. The pipeline passes them
+  from the samplesheet, so they no longer have to be parsed from the folder name. Without them the folder name
+  is parsed as before.
+- The bundled panel's comments name `abotyper-calibrate-panel`.
+
 ## 0.1.0 (2026-11-12)
 
 First release. The typing logic of nf-core/abotyper (refactor branch, `bin/` scripts) as an installable package.

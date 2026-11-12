@@ -15,7 +15,7 @@ from .panel import load_panel, Panel, VariantMarker, default_panel_path
 from .calling import CallingMixin, missing_required_markers  # noqa: F401
 from .calling import GENOTYPE_TABLE, resolve_primary_genotype  # noqa: F401  (re-exported for tests)
 from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,
-                        parse_evidence_status, parse_nanostats, read_controls)
+                        parse_evidence_status, parse_nanostats, read_controls, read_samples)  # noqa: F401
 from .phase import PhaseEvidence, parse_haplotypes_tsv
 from .report import ReportMixin
 
@@ -29,7 +29,7 @@ __credits__ = [
     "Claude Sonnet 5",
 ]
 __license__ = "MIT"
-__version__ = "2.5.0"
+__version__ = "2.6.0"
 __maintainer__ = "Fredrick Mobegi"
 __email__ = "fredrick.mobegi@health.wa.gov.au"
 __status__ = "Production"
@@ -161,7 +161,8 @@ class ABOReportParser(CallingMixin, ReportMixin):
 
     def __init__(self, input_dir, panel: Panel, default_barcode="barcode00",
                  min_depth=30, qc_report="ABO_run_qc.txt", nanoplot_dir=None, threads=1,
-                 negative_control_pattern=None, positive_control_pattern=None, controls=None):
+                 negative_control_pattern=None, positive_control_pattern=None, controls=None,
+                 sample_table=None):
         self.input_dir = input_dir
         self.script_version = __version__      # shown in the About sheet
         self.panel = panel
@@ -169,7 +170,9 @@ class ABOReportParser(CallingMixin, ReportMixin):
         self.results = []
         self.failed_samples = []
         self.output_errors = []               # outputs that could not be written: the run must fail
-        self.controls = dict(controls or {})  # {sample folder name: 'negative' | 'positive'}, from --controls
+        self.controls = dict(controls or {})  # {sample folder name: 'negative' | 'positive'}, from --samples
+        # {sample folder name: {"sample", "barcode", ...}} from --samples; names given there win over the folder name
+        self.sample_table = dict(sample_table or {})
         self._current_control = ""            # control type of the sample being processed
         self.min_depth = min_depth            # reads below which an A1 call is flagged and a sample fails the depth check
         # optional, off by default: sample names matching this pattern are also negative controls
@@ -267,17 +270,29 @@ class ABOReportParser(CallingMixin, ReportMixin):
                 "low": f"Low (<={t('reliability_low_reads')} reads)",
                 "robust": f"Robust(>={t('reliability_robust_reads')} reads)"}[band]
 
-    def extract_sample_info(self, filename):
-        """Sample name and barcode from a sample folder name.
+    @staticmethod
+    def _norm_barcode(value):
+        num = re.sub(r"(?i)^barcode", "", str(value))
+        return f"barcode{num.zfill(2)}" if int(num) <= 99 else f"barcode{num}"
 
-        "S1_barcode07" gives ("S1", "barcode07"). A name without a trailing _barcode<digits> keeps the whole
-        name and gets the default barcode, so "patient-01", "S1.r1" and "X_barcode06_rep2" are all valid.
+    def extract_sample_info(self, filename):
+        """Sample name and barcode of a sample folder.
+
+        The sample table (--samples, from the samplesheet) gives them when it has them; a name without a
+        barcode there gets the default barcode. Otherwise they come from the folder name: "S1_barcode07"
+        gives ("S1", "barcode07"), and a name without a trailing _barcode<digits> keeps the whole name and
+        gets the default barcode, so "patient-01", "S1.r1" and "X_barcode06_rep2" are all valid.
         """
+        row = self.sample_table.get(filename, {})
+        if row.get("sample") or row.get("barcode"):
+            name = row.get("sample") or filename
+            if row.get("barcode"):
+                return name, self._norm_barcode(row["barcode"]), "explicit"
+            return name, self.default_barcode, "default"
         m = self.barcode_suffix.match(filename)
         if m:
             num = m.group("num")
-            barcode = f"barcode{num.zfill(2)}" if int(num) <= 99 else f"barcode{num}"
-            return m.group("name"), barcode, "explicit"
+            return m.group("name"), self._norm_barcode(num), "explicit"
         print(f"No barcode found in '{filename}', using default barcode: {self.default_barcode}")
         return filename, self.default_barcode, "default"
 
@@ -948,17 +963,18 @@ For more information, see: https://github.com/fmobegi/nf-core-abotyper
     parser.add_argument("--min-depth", type=int, default=30, metavar="N",
                          help="Flag A1 calls made on fewer than N reads at c.467/c.1061delC, and samples with fewer than "
                               "N reads at a primary position (depth check) (default: %(default)s)")
-    parser.add_argument("--controls", default=None, metavar="FILE",
-                         help="Tab-separated file of sample folder name and control type ('negative', 'positive' or "
-                              "empty), from the samplesheet `control` column. Negative controls are expected to have "
+    parser.add_argument("--samples", "--controls", dest="samples", default=None, metavar="FILE",
+                         help="Tab-separated sample table from the samplesheet: sample folder name, control type "
+                              "('negative', 'positive' or empty) and, optionally, the sample name and barcode to "
+                              "report (otherwise taken from the folder name). Negative controls are expected to have "
                               "few reads, and reads above --min-depth are flagged as possible contamination; positive "
-                              "controls need normal depth.")
+                              "controls need normal depth. --controls is the former name of this option.")
     parser.add_argument("--positive-control-pattern", default=None, metavar="REGEX",
                          help="Optional: also treat sample names matching this regular expression (case-insensitive) "
-                              "as positive controls when --controls does not list them (default: off)")
+                              "as positive controls when --samples does not list them (default: off)")
     parser.add_argument("--negative-control-pattern", default=None, metavar="REGEX",
                          help="Optional: also treat sample names matching this regular expression (case-insensitive) "
-                              "as negative controls when --controls does not list them (default: off)")
+                              "as negative controls when --samples does not list them (default: off)")
     parser.add_argument("--qc-report", default="ABO_run_qc.txt", metavar="FILE",
                          help="Write the run-level QC summary here; use '' to disable (default: %(default)s)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose output for debugging")
@@ -1005,9 +1021,9 @@ def main():
         sys.exit(1)
 
     try:
-        controls = read_controls(args.controls)
+        sample_table = read_samples(args.samples)
     except (OSError, ValueError) as exc:
-        print(f"! CRITICAL: could not read the controls file '{args.controls}': {exc}")
+        print(f"! CRITICAL: could not read the sample table '{args.samples}': {exc}")
         sys.exit(1)
 
     print(f"Using default barcode: {args.default_barcode}")
@@ -1019,7 +1035,8 @@ def main():
                                       nanoplot_dir=args.nanoplot_dir, threads=args.threads,
                                       negative_control_pattern=args.negative_control_pattern,
                                       positive_control_pattern=args.positive_control_pattern,
-                                      controls=controls)
+                                      controls={k: v["control"] for k, v in sample_table.items() if v["control"]},
+                                      sample_table=sample_table)
     status = parser_instance.run()
     print("All done!\n" if status == 0 else "Finished with errors.\n")
     sys.exit(status)

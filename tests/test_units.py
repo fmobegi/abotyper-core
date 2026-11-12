@@ -90,6 +90,48 @@ def test_sample_names(parser, name, expected):
     assert parser.extract_sample_info(name) == expected
 
 
+def test_read_samples(tmp_path):
+    f = tmp_path / "samples.tsv"
+    f.write_text("S1_x\t\tS1\t7\nNTC\tnegative\t\tbarcode95\nS2\n", encoding="utf-8")
+    assert agg.read_samples(str(f)) == {
+        "S1_x": {"control": "", "sample": "S1", "barcode": "7"},
+        "NTC": {"control": "negative", "sample": "", "barcode": "barcode95"},
+        "S2": {"control": "", "sample": "", "barcode": ""},
+    }
+    assert agg.read_controls(str(f)) == {"NTC": "negative"}
+    f.write_text("S1\t\tS1\tbc7\n", encoding="utf-8")
+    with pytest.raises(ValueError):
+        agg.read_samples(str(f))
+
+
+@pytest.mark.parametrize("folder, row, expected", [
+    ("whatever", {"sample": "S1", "barcode": "7"}, ("S1", "barcode07", "explicit")),
+    ("whatever", {"sample": "", "barcode": "barcode123"}, ("whatever", "barcode123", "explicit")),
+    ("P1_barcode05", {"sample": "P1_barcode05", "barcode": ""}, ("P1_barcode05", "barcode00", "default")),
+    ("S9_barcode09", {"sample": "", "barcode": ""}, ("S9", "barcode09", "explicit")),  # empty row: folder name
+])
+def test_sample_names_from_table(tmp_path, folder, row, expected):
+    p = agg.ABOReportParser(str(tmp_path), abo_panel.load_panel(PANEL), qc_report="",
+                            sample_table={folder: {"control": "", **row}})
+    assert p.extract_sample_info(folder) == expected
+
+
+def test_pileup_bgzipped(tmp_path):
+    import gzip
+    import shutil
+    from conftest import DATA
+    from abotyper_core import pileup2metrics as p2m
+    src = DATA / "ABO_AA_barcode01" / "ABO_AA_barcode01.pileup.txt"
+    gz = tmp_path / "x.mpileup.gz"
+    with open(src, "rb") as fi, gzip.open(gz, "wb") as fo:
+        shutil.copyfileobj(fi, fo)
+    plain = p2m.load_pileup(src)
+    packed = p2m.load_pileup(gz)
+    assert plain and plain.keys() == packed.keys()
+    slots = p2m.PileupColumn.__slots__
+    assert all([getattr(plain[k], a) for a in slots] == [getattr(packed[k], a) for a in slots] for k in plain)
+
+
 def test_read_controls(tmp_path):
     f = tmp_path / "controls.tsv"
     f.write_text("NTC\tnegative\nPOS1\tPositive\nS1\t\nS2\n", encoding="utf-8")

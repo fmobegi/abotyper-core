@@ -7,7 +7,7 @@ result tables. Each step is also a command-line tool (see the README).
 Research use only; not validated for clinical diagnosis.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .panel import Panel, PanelError, VariantMarker, default_panel_path, load_panel  # noqa: E402
 

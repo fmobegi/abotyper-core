@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Output writers of the aggregation: ABO_result.txt/.xlsx, final_export.csv, the run QC report and the MultiQC evidence table.
 
-Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
-tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 from __future__ import annotations
 
@@ -15,7 +13,6 @@ import pandas as pd
 from xlsxwriter.utility import xl_col_to_name
 
 from .naming import _cdna_tokens
-
 
 
 # Reference (default) ISBT allele per internal token: used only when no panel marker
@@ -476,7 +473,7 @@ class ReportMixin:
     def _about_items(self):
         """Version / provenance lines for the About sheet and the QC report."""
         meta = getattr(self.panel, "meta", {}) or {}
-        items = [("aggregate_abo_reports.py", getattr(self, "script_version", "")),
+        items = [("abotyper-core", getattr(self, "script_version", "")),
                  ("Panel version", str(meta.get("panel_version", "unknown"))),
                  ("Panel source", str(meta.get("source", "unknown")))]
         if meta.get("isbt_allele_table_version"):

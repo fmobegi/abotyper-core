@@ -1,9 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-abo_panel.py — shared variant-panel loader and scoring engine for the
-nf-core/abotyper pipeline.
+"""Variant-panel loader and scoring engine (command abotyper-panel, also installed as abo_panel.py).
 
 This module is the ONLY place that understands the panel file format
 (abo_variant_panel.yaml / .yml / .json / .csv / .tsv). Every
@@ -20,8 +15,11 @@ Supported panel file formats (auto-detected from extension):
     .json          - same schema as YAML, machine-friendly
     .csv / .tsv    - flat table, convenient for spreadsheet review/edit
 
-Use `python3 abo_panel.py --export-csv out.csv --panel abo_variant_panel.yaml`
+Use `abotyper-panel --export-csv out.csv --panel abo_variant_panel.yaml`
 to regenerate the flat table from the YAML source after editing.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations
@@ -40,20 +38,7 @@ try:
 except ImportError:  # pragma: no cover
     yaml = None
 
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "2.1.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
+from . import __version__
 
 # ---------------------------------------------------------------------------
 # Flat field list — defines both the CSV column order and the VariantMarker
@@ -370,7 +355,6 @@ class Panel:
 def default_panel_path() -> Path:
     """The default ABO variant panel shipped with the package (data/abo_variant_panel.yaml)."""
     return Path(__file__).resolve().parent / "data" / "abo_variant_panel.yaml"
-
 
 
 def _load_yaml_or_json(path: Path) -> dict:

@@ -5,9 +5,12 @@ BAM-pileup evidence into per-position calls, resolving phenotype, genotype and I
 result tables. Each step is also a command-line tool (see the README).
 
 Research use only; not validated for clinical diagnosis.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from .panel import Panel, PanelError, VariantMarker, default_panel_path, load_panel  # noqa: E402
 

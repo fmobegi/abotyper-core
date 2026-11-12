@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Genotype calling: primary-marker states, the genotype table, A-subtype and subtype-marker scans, and per-haplotype allele naming.
 
-Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
-tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 from __future__ import annotations
 
@@ -15,7 +13,6 @@ import pandas as pd
 from .panel import VariantMarker, call_named_marker
 from .naming import _unpack_fired, encode_allele, encode_extended_genotype, primary_carriers
 from .phase import PhaseEvidence, compute_phase_confidence, phase_relationship
-
 
 
 # State ("ref", "het" or "alt") of the five primary markers, in this order:
@@ -647,7 +644,7 @@ class CallingMixin:
             else:
                 Reliability = "Unknown (no read data)"
 
-            # ----- PART 5: QC / FAILURE CAPTURE (v2.1.0) -----
+            # ----- PART 5: QC / FAILURE CAPTURE -----
             # Annotates the call; never changes it. See the module docstring.
             qc_review: List[str] = []
             encoded_genotype, named_by_phase = self._encode_with_phase(ExtendedGenotype, resolved_phase_evidence)

@@ -1,9 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-calibrate_panel_positions.py — fill in amplicon_pos for the ABO variant panel
-against your finalised combined exon2-7 reference FASTA.
+"""Fill in amplicon_pos for the ABO variant panel against your finalised combined exon 2-7 reference FASTA
+(command abotyper-calibrate-panel).
 
 WHY THIS EXISTS
 ---------------
@@ -36,7 +32,7 @@ MODE 2 -- spliced-alignment mode (requires a SAM/PAF alignment you supply)
 
     Then run:
 
-        python3 calibrate_panel_positions.py \\
+        abotyper-calibrate-panel \\
             --panel abo_variant_panel.yaml \\
             --from-sam abo_transcript_vs_reference.sam \\
             --out abo_variant_panel.calibrated.yaml
@@ -52,6 +48,9 @@ MODE 2 -- spliced-alignment mode (requires a SAM/PAF alignment you supply)
 Both modes can be run in sequence (anchor mode first, then SAM mode to fill
 in the rest) -- later modes only fill in blanks, never overwrite an
 already-calibrated amplicon_pos, unless --force is given.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 import argparse
@@ -66,21 +65,6 @@ try:
     import yaml
 except ImportError:
     yaml = None
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "1.0.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
 
 
 # ---------------------------------------------------------------------------

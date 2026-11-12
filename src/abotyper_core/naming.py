@@ -1,16 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """ISBT allele naming: internal allele tokens (A1, A2.01, O1, ...) to ISBT-style names, narrowed by the panel markers that fired or were ruled out.
 
-Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
-tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 from __future__ import annotations
 
 import re
-
-
-
 
 
 ISBT_ALLELE_NAMES = {

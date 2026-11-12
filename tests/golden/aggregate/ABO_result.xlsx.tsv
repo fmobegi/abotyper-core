@@ -27,7 +27,7 @@ ABO_O2O2	barcode10	O	OO	ABO*O.02.01/ABO*O.02.02	ref (84x)	ref (84x)	ref (84x)	G 
 ABO typing results
 RESEARCH USE ONLY. Not validated for, and not to be used for, clinical diagnosis or transfusion decisions; confirm results with an accredited method before any clinical use.
 
-aggregate_abo_reports.py	<VERSION>
+abotyper-core	<VERSION>
 Panel version	2.3.0
 Panel source	nf-core/abotyper legacy panel (v1.2.0) + ISBT ABO allele table v9
 ISBT ABO allele table	v9 (blooddatabase.isbtweb.org/system/ABO)

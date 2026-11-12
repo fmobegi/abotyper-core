@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-pileup2metrics.py -- two lines of evidence for the ABO panel: Clair3 and the BAM pileup.
+"""Two lines of evidence for the ABO panel, Clair3 and the BAM pileup (command abotyper-pileup2metrics, also
+installed as pileup2metrics.py).
 
 Reads a `samtools mpileup` text file taken over the panel positions, turns it into the
 same per-position table clair2metrics.py writes from a Clair3 gVCF
@@ -31,6 +28,9 @@ homopolymer indels, so disagreement is reported and, at the primary typing marke
 sent to review by aggregate_abo_reports.py rather than silently resolved. Indel-like
 markers use a +-2bp window (alignment of a deletion inside a homopolymer is not unique);
 SNP markers are exact.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations
@@ -41,23 +41,9 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from . import __version__
 from .inputs import open_text
 from .panel import load_panel, VariantMarker, default_panel_path
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "2.2.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
 
 TSV_HEADER = "\t".join([
     "Ref_Position_1based", "Ref_Base", "Match_Percent", "Mismatch_Percent",

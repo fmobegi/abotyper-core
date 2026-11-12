@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 (2026-11-13)
+
+- One version for the whole package. The modules no longer carry their own version numbers; `--version` of
+  every command, the About sheet and the run QC report (`ABO_run_qc.txt`) show the abotyper-core version, under
+  the label `abotyper-core` (formerly `aggregate_abo_reports.py: <script version>`).
+- Every module has the same header: a docstring that names its command, ending with the package, author and
+  licence lines. The per-module `__author__`/`__credits__`/`__version__` fields are removed.
+- The bundled panel's `isbt_coverage_table` field points at the copy in the package.
+
 ## 0.2.0 (2026-11-12)
 
 - `pileup2metrics` reads bgzipped pileups (`*.mpileup.gz`, as written by the nf-core `samtools/mpileup` module)

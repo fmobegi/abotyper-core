@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Readers for the per-sample files the aggregation uses besides the phenotype report: samtools stats/flagstat/coverage, the ABO_EVIDENCE status file, NanoPlot NanoStats and the sample table.
 
-Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
-tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 from __future__ import annotations
 
@@ -12,9 +10,6 @@ import gzip
 import os
 import re
 from typing import Dict, Optional
-
-
-
 
 
 def _first_file(sample_dir: str, patterns) -> Optional[str]:

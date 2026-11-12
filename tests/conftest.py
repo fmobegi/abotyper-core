@@ -55,6 +55,7 @@ def normalise(text, tmp):
     text = text.replace(str(tmp), "<TMP>")
     text = re.sub(r"\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(\.\d+)?)?", "<DATETIME>", text)
     text = re.sub(r"(\.py\W{0,3}(v|version)?\s*)\d+\.\d+\.\d+", r"\1<VERSION>", text)
+    text = re.sub(r"(abotyper-core\W{0,3}(v|version:?)?\s*)\d+\.\d+\.\d+\S*", r"\1<VERSION>", text)
     return text
 
 

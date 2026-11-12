@@ -1,10 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-panel_to_bed.py — generate a BED file of diagnostic positions from the ABO
-variant panel (abo_variant_panel.yaml), for use with Clair3's --bed_fn (and
-for bcftools view -R filtering of its output).
+"""BED file of the diagnostic positions of the ABO variant panel, for Clair3's --bed_fn and bcftools view -R
+(command abotyper-panel-to-bed, also installed as panel_to_bed.py).
 
 Every calibrated panel row becomes one BED interval anchored on its
 resolved_position() (amplicon_pos, falling back to ng006669_2_pos / legacy
@@ -26,6 +21,9 @@ unrelated marker's window.
 
 Row order in the output is sorted by start coordinate (not panel
 declaration order), which is what Clair3/bcftools expect from a BED file.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations
@@ -34,22 +32,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import __version__
 from .panel import load_panel, VariantMarker, default_panel_path
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "1.0.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
 
 def marker_to_interval(marker: VariantMarker, pad: int) -> tuple[int, int]:
     """Return a 0-based half-open (start, end) BED interval for one marker."""

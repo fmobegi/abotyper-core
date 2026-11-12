@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """Phase evidence from the Haplotypes.tsv tables: phase confidence and cis/trans relationships.
 
-Part of aggregate_abo_reports.py (nf-core/abotyper); split out of that script so each part can be read and
-tested on its own. This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 from __future__ import annotations
 
@@ -12,8 +10,6 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
-
-
 
 
 @dataclass

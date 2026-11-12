@@ -1,15 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-Sample Renaming Utility
-
-This file is part of the nf-core/abotyper pipeline "https://github.com/fmobegi/nf-core-abotyper".
-
-This file is part of nf-core/abotyper and is released under the MIT License (see LICENSE).
+"""Rename samples in the ABO export files for MatchPoint (command abotyper-rename-samples). A standalone
+laboratory utility, not run by the pipeline.
 
 This script processes ABO pipeline export files and laboratory deobfuscation files
 to rename samples for MatchPoint export compatibility.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 import argparse
@@ -22,15 +18,7 @@ from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2024, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = ["Fredrick Mobegi", "Benedict Matern", "Mathijs Groeneweg"]
-__license__ = "MIT"
-__version__ = "1.2.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
+from . import __version__
 
 
 class SampleRenamer:

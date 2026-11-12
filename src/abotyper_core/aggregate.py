@@ -1,46 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
-import argparse
-import os
-import re
-import sys
-import glob
-from typing import Dict, List, Optional
-
-import pandas as pd
-
-from .panel import load_panel, Panel, VariantMarker, default_panel_path
-from .calling import CallingMixin, missing_required_markers  # noqa: F401
-from .calling import GENOTYPE_TABLE, resolve_primary_genotype  # noqa: F401  (re-exported for tests)
-from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,
-                        parse_evidence_status, parse_nanostats, read_controls, read_samples)  # noqa: F401
-from .phase import PhaseEvidence, parse_haplotypes_tsv
-from .report import ReportMixin
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "2.6.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
-
-
-"""
-ABO Blood Group Report Aggregator.
+"""Aggregate the per-sample ABO reports into the run result tables: ABO_result.txt/.xlsx, final_export.csv,
+the run QC report and the MultiQC evidence table (command abotyper-aggregate, also installed as
+aggregate_abo_reports.py).
 
 Column layout, per-position parsing, and subtype-marker scanning are driven
 by an external variant panel (--panel, default abo_variant_panel.yaml) via
-abo_panel.py, so adding a diagnostic position or subtype category requires
+the panel module, so adding a diagnostic position or subtype category requires
 editing the panel file only, not this script.
 
 Note: c.657C>T (legacy pos283) is NOT specific to ABO*BW.06 -- it is part of
@@ -64,8 +28,8 @@ to). The decision tree and QC logic still work on the internal tokens and only
 Alignment metrics are read from samtools stats / flagstat files found under
 each sample directory; a missing file leaves the cell blank.
 
-QC / failure capture (v2.1.0)
------------------------------
+QC / failure capture
+--------------------
 Calls are NOT changed. Each sample is annotated with four extra Notes
 columns -- A2Trace, EvidenceBasis, QCStatus, QCFlags -- and the run prints
 (and writes to ABO_run_qc.txt) a QC summary. The checks come from an audit of
@@ -103,7 +67,29 @@ a 6,218-sample run and from reading the upstream converters:
     site-level evidence. The run summary warns when this is the case.
 
 Part of the nf-core/abotyper pipeline: https://github.com/fmobegi/nf-core-abotyper
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
+
+import argparse
+import os
+import re
+import sys
+import glob
+from typing import Dict, List, Optional
+
+import pandas as pd
+
+from . import __version__
+from .panel import load_panel, Panel, VariantMarker, default_panel_path
+from .calling import CallingMixin, missing_required_markers  # noqa: F401
+from .calling import GENOTYPE_TABLE, resolve_primary_genotype  # noqa: F401  (re-exported for tests)
+from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,
+                        parse_evidence_status, parse_nanostats, read_controls, read_samples)  # noqa: F401
+from .phase import PhaseEvidence, parse_haplotypes_tsv
+from .report import ReportMixin
+
 
 
 # ===========================================================================
@@ -164,7 +150,7 @@ class ABOReportParser(CallingMixin, ReportMixin):
                  negative_control_pattern=None, positive_control_pattern=None, controls=None,
                  sample_table=None):
         self.input_dir = input_dir
-        self.script_version = __version__      # shown in the About sheet
+        self.script_version = __version__      # abotyper-core version, shown in the About sheet and the QC report
         self.panel = panel
         self.default_barcode = default_barcode
         self.results = []
@@ -703,7 +689,7 @@ class ABOReportParser(CallingMixin, ReportMixin):
 
 
     # -----------------------------------------------------------------
-    # QC: replicate cross-check and run-level summary (v2.1.0)
+    # QC: replicate cross-check and run-level summary
     # -----------------------------------------------------------------
     @staticmethod
     def _alleles_compatible(x: str, y: str) -> bool:
@@ -1006,7 +992,7 @@ def main():
         print(f"Input directory: {args.input_directory}")
         print(f"Default barcode: {args.default_barcode}")
         print(f"Panel: {args.panel}")
-        print(f"Script version: {__version__}")
+        print(f"abotyper-core version: {__version__}")
 
     try:
         panel = load_panel(args.panel)

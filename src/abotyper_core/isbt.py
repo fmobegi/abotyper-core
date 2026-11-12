@@ -7,6 +7,9 @@ plus the coverage table (data/abo_isbt_v9_coverage.tsv), which records every ISB
 (on_panel, notation_equivalent, structural_variant, not_diagnostic, pipeline_defined).
 
 Nothing is changed automatically: the result is a list of suggestions for a person to review.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations

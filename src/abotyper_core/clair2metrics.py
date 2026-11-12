@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""Convert a Clair3 gVCF into an AlignmentStatistics.tsv table (command abotyper-clair2metrics, also
+installed as clair2metrics.py).
 
-"""
-clair2metrics.py -- convert a Clair3 --gvcf output into the same
-AlignmentStatistics.tsv format pysam_haploscan.py / stats_from_pileup.py
+The table has the AlignmentStatistics.tsv format pysam_haploscan.py / stats_from_pileup.py
 produce, so predict_abo_phenotype.py / aggregate_abo_reports.py can
 consume Clair3 calls with zero changes to their scoring logic.
 
@@ -22,9 +20,9 @@ reference-depth coverage even where no variant is called -- this is
 what recovers indel signal that Clair3's plain (non-gvcf) merge_output
 silently drops (see c.1061delC in the panel notes).
 
-No-evidence positions (v1.1.0)
-------------------------------
-Before v1.1.0, a position with neither a matching variant record nor a
+No-evidence positions
+---------------------
+Formerly, a position with neither a matching variant record nor a
 reference block was written as 100% reference at the sample's MEDIAN block
 depth. That made "Clair3 said nothing here" indistinguishable from a
 confirmed reference call, and it gave every such position a depth it never
@@ -39,6 +37,9 @@ had. Now each panel position is classified as:
 Positions with no evidence are listed on stderr. The aggregator reports them
 as "no evidence" rather than as reference. --legacy-fallback restores the old
 behaviour for reproducing earlier runs.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations
@@ -51,22 +52,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+from . import __version__
 from .panel import load_panel, Panel, VariantMarker, default_panel_path
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "1.1.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
 
 TSV_HEADER = "\t".join([
     "Ref_Position_1based", "Ref_Base", "Match_Percent", "Mismatch_Percent",

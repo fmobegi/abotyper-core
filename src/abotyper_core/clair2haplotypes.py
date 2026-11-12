@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""Convert a Clair3 phased VCF into a Haplotypes.tsv table (command abotyper-clair2haplotypes, also
+installed as clair2haplotypes.py).
 
-"""
-clair2haplotypes.py -- convert a Clair3 phased VCF into the same
-Haplotypes.tsv format pysam_haploscan.py produces, so aggregate_abo_reports.py's
+The table has the format pysam_haploscan.py produced, so aggregate_abo_reports.py's
 existing PhaseConfidence scoring (parse_haplotypes_tsv / compute_phase_confidence)
 works unchanged against Clair3 phasing.
 
@@ -30,6 +28,9 @@ fully span the amplicon, or a low-confidence region broke phasing), each
 phase set contributes its own 2-haplotype pair -- compute_phase_confidence
 will then correctly report lower confidence, reflecting genuine phasing
 fragmentation rather than a single clean phase block.
+
+Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing logic of nf-core/abotyper.
+Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
 from __future__ import annotations
@@ -41,22 +42,8 @@ from pathlib import Path
 from statistics import median
 from typing import Dict, List, Optional, Tuple
 
+from . import __version__
 from .panel import load_panel, Panel, VariantMarker, default_panel_path
-
-# Authorship and licence: provided as part of the nf-core/abotyper pipeline.
-__author__ = "Fredrick Mobegi"
-__copyright__ = "Copyright 2026, ABO blood group typing using third-generation sequencing (TGS) technology"
-__credits__ = [
-    "Fredrick Mobegi",
-    "Benedict Matern",
-    "Mathijs Groeneweg",
-    "Claude Sonnet 5",
-]
-__license__ = "MIT"
-__version__ = "1.1.0"
-__maintainer__ = "Fredrick Mobegi"
-__email__ = "fredrick.mobegi@health.wa.gov.au"
-__status__ = "Production"
 
 class PhasedRecord:
     __slots__ = ("pos", "ref", "alts", "gt", "ps", "ad", "dp")

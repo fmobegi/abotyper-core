@@ -2,7 +2,7 @@
 
 A Python package to assign ABO genotypes and alleles from variant calls using the ISBT database panel.
 
-The ABO blood group typing logic from nf-core/abotyper, packaged as a Python
+The ABO blood group typing logic from [nf-core/abotyper](https://github.com/nf-core/abotyper), packaged as a Python
 library and a set of command-line tools.
 
 It loads and validates the ABO variant panel, turns Clair3 calls and BAM pileups into per-position evidence,
@@ -94,7 +94,7 @@ diff. `tests/requirements-pinned.txt` lists the versions the golden files were m
 
 ## Citation
 
-If you use this package, please cite nf-core/abotyper and its publication:
+If you use this package, please cite [nf-core/abotyper](https://github.com/nf-core/abotyper) and its publication:
 [PubMed 40564908](https://pubmed.ncbi.nlm.nih.gov/40564908/).
 
 ## Licence

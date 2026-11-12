@@ -1,0 +1,53 @@
+name: Release
+
+# Publishing a GitHub release (tag vX.Y.Z) builds the package and uploads it to PyPI with trusted publishing:
+# no token is stored. PyPI must list this repository, workflow file and environment as a trusted publisher.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check the tag matches the package version
+        if: github.event_name == 'release'
+        run: |
+          version=$(python -c "import re; print(re.search(r'__version__ = \"(.+?)\"', open('src/abotyper_core/__init__.py').read()).group(1))")
+          test "v$version" = "${{ github.event.release.tag_name }}" || { echo "tag ${{ github.event.release.tag_name }} != v$version"; exit 1; }
+      - name: Test
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/requirements-pinned.txt -e ".[test]"
+          pytest -q
+      - name: Build
+        run: |
+          pip install build twine
+          python -m build
+          twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/abotyper-core/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

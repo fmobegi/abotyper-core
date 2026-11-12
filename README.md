@@ -13,8 +13,11 @@ resolves phenotype, genotype and ISBT allele names, and writes the per-sample an
 ## Install
 
 ```bash
-pip install git+https://github.com/fmobegi/abotyper-core
+pip install abotyper-core                     # PyPI
+conda install -c conda-forge -c bioconda abotyper-core   # Bioconda
 ```
+
+Containers: `quay.io/biocontainers/abotyper-core` (BioContainers, built from the Bioconda package).
 
 Python 3.11 or newer. Dependencies: pandas, numpy, pyyaml, xlsxwriter and openpyxl.
 

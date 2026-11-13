@@ -192,14 +192,17 @@ class ReportMixin:
                 "QCStatus": r["QCStatus"],
                 "QCFlags": r["QCFlags"],
                 "Replicate note": r.get("ReplicateNote"),
+                "Read-level typing": r.get("ReadTyping"),
             })
-        return pd.DataFrame(rows, columns=[
-            "Sample name", "Barcode", "Number of reads", "Read Length", "Insert Size",
-            "ABO reads", "Mappability %", "Mean depth (covered bases)", "Median Read depth",
-            "Median analyzed Read depth",
-            "Number of question mark positions", "Evidence source", "BAM-only positions",
-            "Clair3/BAM discordant", "Discordant primary positions", "Typing Result", "Phenotype", "Genotype",
-            "Variants detected", "Depth check", "QCStatus", "QCFlags", "Replicate note"]).astype(object)
+        cols = ["Sample name", "Barcode", "Number of reads", "Read Length", "Insert Size",
+                "ABO reads", "Mappability %", "Mean depth (covered bases)", "Median Read depth",
+                "Median analyzed Read depth",
+                "Number of question mark positions", "Evidence source", "BAM-only positions",
+                "Clair3/BAM discordant", "Discordant primary positions", "Typing Result", "Phenotype", "Genotype",
+                "Variants detected", "Depth check", "QCStatus", "QCFlags", "Replicate note"]
+        if getattr(self, "read_typing_enabled", False):
+            cols.append("Read-level typing")
+        return pd.DataFrame(rows, columns=cols).astype(object)
 
     def save_results_to_file(self, final_df):
         """Save results to text and Excel files; column count/labels are dynamic."""

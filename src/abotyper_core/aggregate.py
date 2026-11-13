@@ -73,6 +73,7 @@ Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MI
 """
 
 import argparse
+import csv
 import os
 import re
 import sys
@@ -89,6 +90,9 @@ from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_fil
                         parse_evidence_status, parse_nanostats, read_controls, read_samples)  # noqa: F401
 from .phase import PhaseEvidence, parse_haplotypes_tsv
 from .report import ReportMixin
+
+READ_TYPING_SUFFIX = ".ReadTyping.tsv"     # abotyper-readtyper summary in <sample>/combined/
+READ_TYPING_MAX_UNEXPLAINED = 0.10         # share of reads fitting neither typed allele that sends a sample to REVIEW
 
 
 
@@ -224,6 +228,12 @@ class ABOReportParser(CallingMixin, ReportMixin):
 
         self.notes_columns = ["ASubtype", "ReadReliability", "DepthCheck", "PhaseConfidence", "BwSubtype",
                               "A2Trace", "EvidenceBasis", "QCStatus", "QCFlags", "ReplicateNote"]
+        # read-level typing (abotyper-readtyper) is optional: its column appears only in runs that have it, so
+        # runs without it keep the same report layout
+        self.read_typing_enabled = bool(glob.glob(os.path.join(str(self.input_dir), "*", self._COMBINED_DIRNAME,
+                                                                f"*{READ_TYPING_SUFFIX}")))
+        if self.read_typing_enabled:
+            self.notes_columns.append("ReadTyping")
         header_cols += ["Notes"] * len(self.notes_columns)
 
         column_metrics = ["#Reads", "Mat", "Mis", "Ins", "Del", "A", "G", "C", "T", "Type"]
@@ -485,6 +495,8 @@ class ABOReportParser(CallingMixin, ReportMixin):
             )
 
             self._record_sample_metrics(result_df, sample_name, barcode, sample_dir)
+            if self.read_typing_enabled:
+                self._apply_read_typing(result_df, sample_dir)
 
             self.results.append(result_df)
             print(f"Successfully processed {filename}")
@@ -494,6 +506,53 @@ class ABOReportParser(CallingMixin, ReportMixin):
             import traceback
             traceback.print_exc()
             self.failed_samples.append({"sample": filename, "reason": f"Processing error: {e}"})
+
+    def _apply_read_typing(self, result_df, sample_dir):
+        """Cross-check the call with the read-level typing (abotyper-readtyper), if the sample has it.
+
+        The call itself is never changed. The ReadTyping note records the read-level result, and the sample goes
+        to REVIEW when the two disagree on genotype or allele, or when the read-level checks see a third haplotype
+        (possible contamination) or a coding variant not in the ISBT table."""
+        files = glob.glob(os.path.join(sample_dir, self._COMBINED_DIRNAME, f"*{READ_TYPING_SUFFIX}"))
+        msgs = []
+        if not files:
+            note = "not run"
+        else:
+            try:
+                with open(files[0], newline="") as fh:
+                    rt = next(csv.DictReader(fh, delimiter="\t"))
+            except (OSError, StopIteration, csv.Error) as e:
+                rt, note = None, f"unreadable ({e})"
+            if rt is not None:
+                geno, status = rt.get("genotype", ""), rt.get("status", "")
+                pair = f"{rt.get('allele_1', '')}/{rt.get('allele_2', '')}"
+                note = f"{geno} {pair} [{status}; {rt.get('reads_typed', '')} reads]" if geno != "NOCALL" \
+                    else f"NOCALL [{rt.get('flags', '')}]"
+                call_geno = str(result_df.at[0, ("Result", "Genotype")])
+                call_ext = str(result_df.at[0, ("Result", "ExtendedGenotype")])
+                if geno and geno != "NOCALL" and call_geno not in ("", "nan", "Unknown"):
+                    if geno != call_geno:
+                        msgs.append(f"read-level typing disagrees on genotype ({geno}, {pair})")
+                    elif call_ext not in ("", "nan") and not self._typings_compatible(call_ext, pair):
+                        msgs.append(f"read-level typing disagrees at allele level ({pair})")
+                try:
+                    unexpl = float(rt.get("unexplained_share") or 0)
+                except ValueError:
+                    unexpl = 0.0
+                if unexpl >= READ_TYPING_MAX_UNEXPLAINED:
+                    msgs.append(f"{unexpl:.0%} of reads fit neither typed allele (closest: "
+                                f"{rt.get('third_allele') or '?'}): possible contamination")
+                if rt.get("novel_variants"):
+                    msgs.append(f"coding variants not in the ISBT table: {rt['novel_variants']}")
+                if msgs:
+                    note += " -- " + "; ".join(msgs)
+        result_df.at[0, ("Notes", "ReadTyping")] = note
+        if msgs:
+            old = str(result_df.at[0, ("Notes", "QCFlags")] or "")
+            if old == "nan":
+                old = ""
+            result_df.at[0, ("Notes", "QCFlags")] = (old + "; " if old else "") + "; ".join(msgs)
+            result_df.at[0, ("Notes", "QCStatus")] = "REVIEW"
 
     def _record_sample_metrics(self, result_df, sample_name, barcode, sample_dir):
         """Collect the Typing-sheet metrics for one sample (never raises)."""

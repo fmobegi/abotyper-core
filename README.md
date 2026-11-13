@@ -34,6 +34,7 @@ Python 3.11 or newer. Dependencies: pandas, numpy, pyyaml, xlsxwriter and openpy
 | `abotyper-aggregate` | Aggregate per-sample results into the final report (xlsx, csv) |
 | `abotyper-calibrate-panel` | Fill amplicon coordinates into a panel from a reference |
 | `abotyper-rename-samples` | Rename samples from a mapping sheet |
+| `abotyper-readtyper` | Read-level allele-pair typing with haplotype consensus, allele-balance and contamination checks (complements the per-position calls) |
 
 Each command takes `--help`. Commands that read the panel default to the bundled
 `abotyper_core/data/abo_variant_panel.yaml`; pass `--panel` to use another one.

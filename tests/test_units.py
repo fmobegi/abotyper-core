@@ -163,9 +163,10 @@ def test_window_marker_ignores_a_nearby_snp():
 
 
 def test_commands_installed():
-    """The package installs the nine abotyper-* commands and nothing else (no .py aliases on PATH)."""
+    """The package installs the ten abotyper-* commands and nothing else (no .py aliases on PATH)."""
     from importlib.metadata import entry_points
     names = {ep.name for ep in entry_points(group="console_scripts") if ep.value.startswith("abotyper_core.")}
     assert names == {"abotyper-panel", "abotyper-panel-to-bed", "abotyper-clair2metrics", "abotyper-clair2haplotypes",
                      "abotyper-pileup2metrics", "abotyper-predict-phenotype", "abotyper-aggregate",
-                     "abotyper-calibrate-panel", "abotyper-rename-samples"}
+                     "abotyper-calibrate-panel", "abotyper-rename-samples",
+                     "abotyper-readtyper"}

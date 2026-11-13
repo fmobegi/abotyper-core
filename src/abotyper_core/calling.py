@@ -810,6 +810,7 @@ class CallingMixin:
                 not declared and not is_negative and self.positive_control_re and self.positive_control_re.search(_sid))
             lowest = min(primary_reads) if primary_reads else 0
             highest = max(primary_reads) if primary_reads else 0
+            self._current_negative_clean = bool(is_negative and highest <= self.min_depth)
             if is_negative:
                 if highest <= self.min_depth:
                     DepthCheck = f"Negative control: low depth as expected (max {int(highest)} reads)"

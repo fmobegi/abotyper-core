@@ -88,6 +88,13 @@ The golden tests run every step on ten fixture samples and compare the outputs b
 with `tests/golden/`. After an intended output change, regenerate them with `UPDATE_GOLDEN=1 pytest` and review the
 diff. `tests/requirements-pinned.txt` lists the versions the golden files were made with.
 
+### Branches and releases
+
+- Open pull requests against `dev`, the default branch. CI (ruff and pytest on Python 3.11 and 3.13) must pass
+  before a merge.
+- `main` holds released code only. A release is a pull request from `dev` into `main`, then a GitHub release
+  tagged `vX.Y.Z` from `main`, which publishes to PyPI. Urgent fixes can go from a `hotfix/*` branch.
+
 ## Citation
 
 If you use this package, please cite [nf-core/abotyper](https://github.com/nf-core/abotyper) and its publication:

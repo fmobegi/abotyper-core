@@ -228,28 +228,86 @@ def open_text(path):
     return open(path, "r", encoding="utf-8")
 
 
-def read_samples(path: Optional[str]) -> Dict[str, Dict[str, str]]:
-    """The sample table from the samplesheet: {sample id: {"control", "sample", "barcode"}}.
+# per-sample files that abotyper-aggregate reads, by --samples column -> the file suffix it looks for
+SAMPLE_FILE_COLUMNS = {
+    "phenotype": "ABOPhenotype.txt",          # abotyper-predict-phenotype
+    "haplotypes": "Haplotypes.tsv",           # abotyper-clair2haplotypes
+    "evidence_status": "evidence_status.tsv", # abotyper-pileup2metrics --status-out
+    "concordance": "concordance.tsv",         # abotyper-pileup2metrics --concordance-out
+    "coverage": "coverage.txt",               # samtools coverage
+    "stats": "stats",                         # samtools stats
+    "flagstat": "flagstat",                   # samtools flagstat
+    "nanostats": "NanoStats.txt",             # NanoPlot
+}
+SAMPLE_TABLE_COLUMNS = ["id", "control", "sample", "barcode", *SAMPLE_FILE_COLUMNS]
 
-    Tab-separated, one row per sample id: id, control type ('negative', 'positive' or empty) and,
-    optionally, the sample name and barcode to report. When name and barcode are both empty, they are
-    taken from the sample id (see ABOReportParser.extract_sample_info).
+
+def read_samples(path: Optional[str]) -> Dict[str, Dict[str, object]]:
+    """The sample table from the samplesheet: {sample id: {"control", "sample", "barcode", "files"}}.
+
+    Tab-separated, one row per sample id. Two layouts are accepted:
+
+    - with a header row starting with ``id``: named columns from SAMPLE_TABLE_COLUMNS, in any order. The file
+      columns (phenotype, haplotypes, ...) give each sample's files directly, so no sample folders are needed;
+      empty cells are files the sample does not have.
+    - without a header: id, control type and, optionally, the sample name and barcode to report.
+
+    Control is 'negative', 'positive' or empty. When name and barcode are both empty, they are taken from the
+    sample id (see ABOReportParser.extract_sample_info).
     """
-    samples: Dict[str, Dict[str, str]] = {}
+    samples: Dict[str, Dict[str, object]] = {}
     if not path:
         return samples
     with open(path, encoding="utf-8") as fh:
-        for n, line in enumerate(fh, start=1):
-            if not line.strip():
-                continue
-            parts = [p.strip() for p in line.rstrip("\n").split("\t")] + ["", "", ""]
-            sample_id, kind, name, barcode = parts[0], parts[1].lower(), parts[2], parts[3]
-            if kind not in ("", "negative", "positive"):
-                raise ValueError(f"{path} line {n}: control must be empty, 'negative' or 'positive', got '{kind}'")
-            if barcode and not re.fullmatch(r"(barcode)?\d+", barcode, re.IGNORECASE):
-                raise ValueError(f"{path} line {n}: barcode must be a number or barcode<number>, got '{barcode}'")
-            samples[sample_id] = {"control": kind, "sample": name, "barcode": barcode}
+        lines = [(n, ln.rstrip("\r\n")) for n, ln in enumerate(fh, start=1) if ln.strip()]
+    header = None
+    if lines and lines[0][1].split("\t")[0].strip().lower() == "id":
+        header = [h.strip().lower() for h in lines[0][1].split("\t")]
+        unknown = [h for h in header if h not in SAMPLE_TABLE_COLUMNS]
+        if unknown:
+            raise ValueError(f"{path} line 1: unknown column(s) {', '.join(unknown)}; "
+                             f"expected {', '.join(SAMPLE_TABLE_COLUMNS)}")
+        lines = lines[1:]
+    for n, line in lines:
+        parts = [p.strip() for p in line.split("\t")]
+        if header:
+            row = dict(zip(header, parts + [""] * (len(header) - len(parts))))
+        else:
+            row = dict(zip(["id", "control", "sample", "barcode"], parts + ["", "", ""]))
+        sample_id, kind = row.get("id", ""), row.get("control", "").lower()
+        name, barcode = row.get("sample", ""), row.get("barcode", "")
+        if not sample_id:
+            raise ValueError(f"{path} line {n}: empty sample id")
+        if kind not in ("", "negative", "positive"):
+            raise ValueError(f"{path} line {n}: control must be empty, 'negative' or 'positive', got '{kind}'")
+        if barcode and not re.fullmatch(r"(barcode)?\d+", barcode, re.IGNORECASE):
+            raise ValueError(f"{path} line {n}: barcode must be a number or barcode<number>, got '{barcode}'")
+        files = {c: row[c] for c in SAMPLE_FILE_COLUMNS if row.get(c)}
+        samples[sample_id] = {"control": kind, "sample": name, "barcode": barcode, "files": files}
     return samples
+
+
+def stage_sample_files(samples: Dict[str, Dict[str, object]], root: str) -> int:
+    """Lay out the files named in a sample table as <root>/<id>/combined/<id>.<suffix> (symlinks, else copies), the
+    folder layout abotyper-aggregate reads. Returns the number of samples staged."""
+    import shutil
+    n = 0
+    for sid, row in samples.items():
+        files = row.get("files") or {}
+        if not files:
+            continue
+        d = os.path.join(root, sid, "combined")
+        os.makedirs(d, exist_ok=True)
+        for col, src in files.items():
+            if not os.path.isfile(src):
+                raise ValueError(f"sample {sid}: {col} file '{src}' does not exist")
+            dst = os.path.join(d, f"{sid}.{SAMPLE_FILE_COLUMNS[col]}")
+            try:
+                os.symlink(os.path.abspath(src), dst)
+            except OSError:
+                shutil.copyfile(src, dst)
+        n += 1
+    return n
 
 
 def read_controls(path: Optional[str]) -> Dict[str, str]:

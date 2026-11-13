@@ -1,0 +1,25 @@
+name: Branch check
+
+# main only takes release merges from dev (or hotfix/* branches) of this repository.
+on:
+  pull_request_target:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the source branch
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REPO" = "$BASE_REPO" ] && { [ "$HEAD_REF" = "dev" ] || [[ "$HEAD_REF" == hotfix/* ]]; }; then
+            echo "ok: $HEAD_REPO:$HEAD_REF"
+          else
+            echo "Pull requests into main must come from dev (or hotfix/*) in $BASE_REPO, not $HEAD_REPO:$HEAD_REF. Please target dev."
+            exit 1
+          fi

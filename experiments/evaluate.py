@@ -57,10 +57,15 @@ def main() -> int:
             rt = b / "read" / f"{s}.tsv"
             if rt.is_file():
                 r = next(csv.DictReader(rt.open(), delimiter="\t"))
-                o = sorted(x for x in (r.get("o_subtypes") or "").split("/") if x)
-                calls.append(dict(depth=depth, rep=rep, method="read", sample=s, truth=t_cls, call=r["genotype"],
-                                  o_truth="/".join(t_o), o_call="/".join(o), qc="", extended=r.get("best_pair", ""),
-                                  margin=r.get("margin_vs_other_class", ""), reads=r.get("reads", ""),
+                # prototype (readtyper.py) or packaged abotyper-readtyper output
+                pair = r.get("best_pair") or "/".join(x for x in (r.get("allele_1"), r.get("allele_2")) if x)
+                o = (sorted(x for x in (r.get("o_subtypes") or "").split("/") if x) if "o_subtypes" in r
+                     else o_from_extended(pair))
+                call = r["genotype"] if r["genotype"] not in ("NOCALL", "") else ""
+                calls.append(dict(depth=depth, rep=rep, method="read", sample=s, truth=t_cls, call=call,
+                                  o_truth="/".join(t_o), o_call="/".join(o), qc=r.get("status", ""), extended=pair,
+                                  margin=r.get("margin_vs_other_class", r.get("margin", "")),
+                                  reads=r.get("reads", r.get("reads_typed", "")),
                                   unexplained=r.get("unexplained_share", ""), note=r.get("note", "")))
             for meth in ("cur", "baq", "q0", "q12", "pipeline"):
                 d = b / meth
@@ -105,7 +110,7 @@ def main() -> int:
             n = a["n"]
             pct = lambda x, d=n: f"{100 * x / d:.0f}" if d else ""
             print(f"{meth}\t{depth}\t{n}\t{pct(a['class_ok'])}\t{pct(a['o_ok'], a['o_n'])}\t{pct(a['wrong'])}\t"
-                  f"{pct(a['nocall'])}\t{pct(a['review']) if meth != 'read' else ''}\t{a['wrong_pass'] if meth != 'read' else ''}")
+                  f"{pct(a['nocall'])}\t{pct(a['review'])}\t{a['wrong_pass']}")
     return 0
 
 

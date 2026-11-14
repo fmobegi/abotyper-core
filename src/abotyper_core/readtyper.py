@@ -44,6 +44,7 @@ from abotyper_core.panel import default_panel_path, load_panel
 
 DATA = Path(default_panel_path()).parent
 ISBT_TABLE = DATA / "isbt_abo_alleles.tsv"
+UNLISTED_TABLE = DATA / "abo_unlisted_haplotypes.tsv"   # recurring haplotypes not fully listed in ISBT
 
 # coding exons of ABO (NM_020469) in cDNA coordinates; exon 1 (c.1-28) is outside the exon 2-7 amplicon
 EXON_CDNA = {"Exon 2": (29, 98), "Exon 3": (99, 155), "Exon 4": (156, 203), "Exon 5": (204, 239),
@@ -464,8 +465,33 @@ def binom_tail(k: int, n: int) -> float:
     return math.exp(m) * sum(math.exp(x - m) for x in logs)
 
 
+def load_unlisted(path: Optional[Path] = None) -> Dict[tuple, Tuple[str, str, str]]:
+    """{(called allele, frozenset of differing sites): (report_as, phenotype, evidence)} from the table of recurring
+    haplotypes that differ from their nearest ISBT allele (see data/abo_unlisted_haplotypes.tsv)."""
+    path = UNLISTED_TABLE if path is None else path
+    out: Dict[tuple, Tuple[str, str, str]] = {}
+    if not path or not Path(path).is_file():
+        return out
+    with open(path, encoding="utf-8") as fh:
+        for r in csv.DictReader((ln for ln in fh if not ln.startswith("#")), delimiter="\t"):
+            sites = frozenset(x.strip() for x in r["differs_at"].split(",") if x.strip())
+            out[(r["called_allele"].strip(), sites)] = (r["report_as"].strip(), r["phenotype"].strip(),
+                                                          r.get("evidence", "").strip())
+    return out
+
+
+_UNLISTED_DEFAULT: Optional[Dict[tuple, Tuple[str, str, str]]] = None
+
+
+def _default_unlisted():
+    global _UNLISTED_DEFAULT
+    if _UNLISTED_DEFAULT is None:
+        _UNLISTED_DEFAULT = load_unlisted()
+    return _UNLISTED_DEFAULT
+
+
 def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: Dict[int, int],
-                min_af: float = MIN_AF) -> TypingResult:
+                min_af: float = MIN_AF, unlisted: Optional[Dict[tuple, Tuple[str, str, str]]] = None) -> TypingResult:
     names = table.names
     L = read_likelihoods(reads, table)
     # only reads that tell alleles apart are typed: a read covering no distinguishing site fits every allele equally,
@@ -521,6 +547,9 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         groups = [(ia, [r for r in range(len(reads)) if L[r, ia] > L[r, ib]]),
                   (ib, [r for r in range(len(reads)) if L[r, ib] > L[r, ia]])]
     haps, final = [], []
+    unlisted = _default_unlisted() if unlisted is None else unlisted
+    named_pheno: Dict[str, str] = {}
+    notes: List[str] = []
     for a, idx in groups:
         cons = consensus_sites(reads, idx)
         mism = consensus_mismatches(cons, table)
@@ -537,6 +566,18 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
                 flags.append(note)
                 name = best_common
         mm, strong = allele_mismatches(reads, idx, cons, names.index(name), table, coding)
+        # a recurring haplotype that differs from its ISBT allele at exactly the listed sites: reported under its own
+        # name, with a note instead of a REVIEW flag (any other difference still goes to REVIEW)
+        differs = frozenset(m.split(" (")[0] for m in mm)
+        hit = unlisted.get((name, differs)) if mm else None
+        if hit:
+            report_as, pheno, _evidence = hit
+            msg = (f"{report_as}: {name} + {', '.join(sorted(differs))}, a recurring haplotype that ISBT does not "
+                   "list (see abo_unlisted_haplotypes.tsv)")
+            notes.append(msg)
+            note = (note + "; " if note else "") + msg
+            named_pheno[report_as] = pheno
+            name, strong = report_as, 0
         haps.append(Haplotype(name, len(idx), cons, exact, nearest, nm,
                               novel_variants(reads, idx, seq, coding, table), note, mm, strong))
         final.append(name)
@@ -544,7 +585,8 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         final = final * 2
         haps[0].reads = len(reads)
     a1, a2 = final
-    p1, p2 = table.phenotype.get(a1, ""), table.phenotype.get(a2, "")
+    pheno_of = {**table.phenotype, **named_pheno}
+    p1, p2 = pheno_of.get(a1, ""), pheno_of.get(a2, "")
     genotype = genotype_of([allele_class(p1, a1), allele_class(p2, a2)])
     classes_tied = {gclass(p) for p in ties}
     if len(classes_tied) > 1:
@@ -581,6 +623,7 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         "novel_variants": ";".join(novel),
         "haplotype_mismatches": "; ".join(f"{h.allele}: {', '.join(h.mismatches)}" for h in haps if h.mismatches),
         "flags": "; ".join(flags),
+        "notes": "; ".join(notes),
     }
     return TypingResult(summary, haps)
 
@@ -588,20 +631,21 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
 SUMMARY_FIELDS = ["sample", "reads_aligned", "reads_typed", "allele_1", "allele_2", "genotype", "phenotype",
                   "status", "loglik", "margin", "alt_pair", "tied_pairs", "reads_a_b", "minor_allele_share",
                   "unexplained_share", "chimera_share", "third_allele", "novel_variants", "haplotype_mismatches",
-                  "flags"]
+                  "flags", "notes"]
 HAPLOTYPE_FIELDS = ["sample", "haplotype", "allele", "reads", "isbt_exact_matches", "nearest_isbt",
                     "nearest_mismatches", "sites_called", "allele_mismatches", "novel_variants", "note"]
 
 
 def run(bam: Path, ref: Path, sample: str, panel: Optional[str] = None, isbt: Optional[Path] = None,
-        min_af: float = MIN_AF) -> TypingResult:
+        min_af: float = MIN_AF, unlisted: Optional[str] = None) -> TypingResult:
     seq = read_fasta(ref)
     offsets = exon_offsets(load_panel(panel or default_panel_path()))
     table = load_alleles(isbt or ISBT_TABLE, offsets, seq)
     coding = coding_map(offsets)
     reads, seen = observe_reads(bam, table, coding)
     base = {"sample": sample, "reads_aligned": seen, "reads_typed": 0}
-    res = type_sample(reads, table, seq, coding, min_af)
+    named = None if unlisted is None else ({} if unlisted == "none" else load_unlisted(Path(unlisted)))
+    res = type_sample(reads, table, seq, coding, min_af, named)
     res.summary = {k: {**base, **res.summary}.get(k, "") for k in SUMMARY_FIELDS}
     return res
 
@@ -639,8 +683,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--isbt", default=None, help="ISBT allele table (default: bundled)")
     ap.add_argument("--min-af", type=float, default=MIN_AF,
                     help=f"minor allele read share below which a skewed het is called homozygous (default {MIN_AF})")
+    ap.add_argument("--unlisted", default=None,
+                    help="table of recurring haplotypes not listed in ISBT, reported under their own name "
+                         "(default: bundled abo_unlisted_haplotypes.tsv; 'none' to report them all as REVIEW)")
     a = ap.parse_args(argv)
-    res = run(Path(a.bam), Path(a.ref), a.sample, a.panel, Path(a.isbt) if a.isbt else None, a.min_af)
+    res = run(Path(a.bam), Path(a.ref), a.sample, a.panel, Path(a.isbt) if a.isbt else None, a.min_af,
+              a.unlisted)
     write_outputs(res, a.sample, Path(a.out), Path(a.haplotypes_out) if a.haplotypes_out else None)
     return 0
 

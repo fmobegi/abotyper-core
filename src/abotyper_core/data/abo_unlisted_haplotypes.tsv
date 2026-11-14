@@ -1,0 +1,8 @@
+# Recurring ABO haplotypes that differ from their nearest ISBT allele at known sites, confirmed by an independent
+# method, and reported under a name of their own by abotyper-readtyper instead of being sent to REVIEW.
+# A haplotype matches a row only when its consensus differs from `called_allele` at exactly the sites in `differs_at`
+# (comma-separated, as abotyper-readtyper writes them); any other difference still goes to REVIEW.
+# `report_as` is not an ISBT name: it says which ISBT allele the haplotype most likely is, and that the ISBT
+# definition does not list all of its changes.
+called_allele	differs_at	report_as	phenotype	evidence
+ABO*O.01.68	c.595 C>T	ABO*O.01.12-like	O	O.01.68 changes (c.106,188,189,261del,297,646,681,771,829) plus c.595C>T, the change that defines ABO*O.01.12; ISBT lists O.01.12 without the exon 3-4 changes. 104 of 2,776 typed libraries of the retrospective set (Nov 2026); c.595C>T called by Clair3 in all 104; read support median 97%.

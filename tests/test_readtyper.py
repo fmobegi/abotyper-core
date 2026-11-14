@@ -225,3 +225,32 @@ def test_haplotype_off_its_allele_is_flagged(model):
     # the clean pair is not flagged
     s = rt.type_sample(_obs(table, "ABO*A1.01", 40) + _obs(table, "ABO*O.01.24", 40), table, seq, coding).summary
     assert s["haplotype_mismatches"] == "" and s["status"] == "PASS"
+
+
+def test_recurring_unlisted_haplotype_is_named(model):
+    """ABO*O.01.68 + c.595C>T (recurring, Clair3-confirmed) is reported as ABO*O.01.12-like and stays PASS; with the
+    table switched off, or with one more difference, it goes to REVIEW."""
+    seq, _, table, coding = model
+    i595 = next(i for i, s in enumerate(table.sites) if s.kind == "snv" and coding.get(s.lo) == 595)
+
+    def o168_595(n):
+        hap = _obs(table, "ABO*O.01.68", n)
+        for r in hap:
+            r.sites[i595] = "T"
+        return hap
+
+    res = rt.type_sample(_obs(table, "ABO*O.01.01", 40) + o168_595(40), table, seq, coding)
+    s = res.summary
+    assert "ABO*O.01.12-like" in (s["allele_1"], s["allele_2"]) and s["genotype"] == "OO" and s["phenotype"] == "O"
+    assert s["status"] == "PASS" and "possible new allele" not in s["flags"]
+    assert "ABO*O.01.68 + c.595 C>T" in s["notes"] and "c.595 C>T" in s["haplotype_mismatches"]
+    # table off: the same haplotype is a possible new allele
+    s = rt.type_sample(_obs(table, "ABO*O.01.01", 40) + o168_595(40), table, seq, coding, unlisted={}).summary
+    assert s["status"] == "REVIEW" and "possible new allele" in s["flags"]
+    # one more difference than the table lists: REVIEW
+    i220 = next(i for i, s_ in enumerate(table.sites) if s_.kind == "snv" and coding.get(s_.lo) == 220)
+    hap = o168_595(40)
+    for r in hap:
+        r.sites[i220] = "T"
+    s = rt.type_sample(_obs(table, "ABO*O.01.01", 40) + hap, table, seq, coding).summary
+    assert s["status"] == "REVIEW" and "possible new allele" in s["flags"]

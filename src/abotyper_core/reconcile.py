@@ -160,7 +160,8 @@ class ReconcileMixin:
         geno, status = rt.get("genotype", ""), rt.get("status", "")
         a_called = bool(geno) and geno != "NOCALL"
         pair = f"{rt.get('allele_1', '')}/{rt.get('allele_2', '')}" if a_called else ""
-        put("ReadTyping", f"{geno} {pair} [{status}; {rt.get('reads_typed', '')} reads]" if a_called
+        put("ReadTyping", (f"{geno} {pair} [{status}; {rt.get('reads_typed', '')} reads]"
+                           + (f" -- note: {rt['notes']}" if rt.get("notes") else "")) if a_called
             else f"NOCALL [{rt.get('flags', '')}]")
         put("Margin", rt.get("margin", ""))
         put("AlleleBalance", f"{rt.get('reads_a_b', '')} (minor {rt.get('minor_allele_share', '')})"

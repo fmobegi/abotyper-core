@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1 (unreleased)
+
+- `abotyper-aggregate` takes explicit inputs: with a header row, `--samples` can name each sample's files
+  (columns `phenotype`, `haplotypes`, `evidence_status`, `concordance`, `coverage`, `stats`, `flagstat`,
+  `nanostats`), and the input directory is then optional. The report is the same as with the
+  `per_sample_processing/<id>/combined/` folder layout, which still works. nf-core/abotyper uses this, so its
+  aggregation module no longer builds the folder layout.
+- A declared negative control with no reads over the ABO region now passes QC. Before, it was sent to REVIEW as
+  "No reads over ABO region (likely amplicon dropout)", although the Typing sheet said low depth was expected.
+
 ## 0.3.0 (2026-11-13)
 
 - One version for the whole package. The modules no longer carry their own version numbers; `--version` of

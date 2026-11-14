@@ -94,13 +94,29 @@ def test_read_samples(tmp_path):
     f = tmp_path / "samples.tsv"
     f.write_text("S1_x\t\tS1\t7\nNTC\tnegative\t\tbarcode95\nS2\n", encoding="utf-8")
     assert agg.read_samples(str(f)) == {
-        "S1_x": {"control": "", "sample": "S1", "barcode": "7"},
-        "NTC": {"control": "negative", "sample": "", "barcode": "barcode95"},
-        "S2": {"control": "", "sample": "", "barcode": ""},
+        "S1_x": {"control": "", "sample": "S1", "barcode": "7", "files": {}},
+        "NTC": {"control": "negative", "sample": "", "barcode": "barcode95", "files": {}},
+        "S2": {"control": "", "sample": "", "barcode": "", "files": {}},
     }
     assert agg.read_controls(str(f)) == {"NTC": "negative"}
     f.write_text("S1\t\tS1\tbc7\n", encoding="utf-8")
     with pytest.raises(ValueError):
+        agg.read_samples(str(f))
+
+
+def test_read_samples_with_header(tmp_path):
+    """A header row names the columns (any order) and can give each sample's files."""
+    f = tmp_path / "samples.tsv"
+    f.write_text("id\tbarcode\tcontrol\tsample\tphenotype\tcoverage\n"
+                 "S1_x\t7\t\tS1\tS1_x.ABOPhenotype.txt\tS1_x.coverage.txt\n"
+                 "NTC\t95\tnegative\t\t\t\n", encoding="utf-8")
+    assert agg.read_samples(str(f)) == {
+        "S1_x": {"control": "", "sample": "S1", "barcode": "7",
+                 "files": {"phenotype": "S1_x.ABOPhenotype.txt", "coverage": "S1_x.coverage.txt"}},
+        "NTC": {"control": "negative", "sample": "", "barcode": "95", "files": {}},
+    }
+    f.write_text("id\tcontrol\tpileup\nS1\t\tx\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown column"):
         agg.read_samples(str(f))
 
 

@@ -86,8 +86,8 @@ from . import __version__
 from .panel import load_panel, Panel, VariantMarker, default_panel_path
 from .calling import CallingMixin, missing_required_markers  # noqa: F401
 from .calling import GENOTYPE_TABLE, resolve_primary_genotype  # noqa: F401  (re-exported for tests)
-from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,
-                        parse_evidence_status, parse_nanostats, read_controls, read_samples)  # noqa: F401
+from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,  # noqa: F401
+                        parse_evidence_status, parse_nanostats, read_controls, read_samples, stage_sample_files)
 from .phase import PhaseEvidence, parse_haplotypes_tsv
 from .report import ReportMixin
 
@@ -430,6 +430,7 @@ class ABOReportParser(CallingMixin, ReportMixin):
             sample_name, barcode, pattern_type = self.extract_sample_info(filename)
             sample_dir = os.path.join(self.input_dir, filename)
             self._current_control = self.controls.get(filename, "")
+            self._current_negative_clean = False   # set by assign_phenotype_genotype
 
             result_df = pd.DataFrame(columns=self.columns)
             result_df.loc[0, ("", "Barcode")] = barcode.replace("barcode", "")
@@ -574,7 +575,10 @@ class ABOReportParser(CallingMixin, ReportMixin):
                             "discordant_primary": status["discordant_primary"]})
             msgs = []
             label = "OK"
-            if status["evidence_source"] == "NONE":
+            if status["evidence_source"] == "NONE" and getattr(self, "_current_negative_clean", False):
+                # a clean negative control: no reads over the ABO region is the expected result, not a dropout
+                label = "Negative control: no reads over the ABO region, as expected"
+            elif status["evidence_source"] == "NONE":
                 mx = status["bam_max_depth"]
                 if mx == 0:
                     label = "No reads over ABO region (likely amplicon dropout)"
@@ -598,7 +602,7 @@ class ABOReportParser(CallingMixin, ReportMixin):
                 msgs.append(f"Clair3 and BAM pileup disagree at primary position(s): "
                             f"{status['primary_names']}")
             metrics["evidence_label"] = label
-            if msgs:
+            if msgs and not getattr(self, "_current_negative_clean", False):
                 # the two lines of evidence do not support the call equally: always review
                 old = str(result_df.at[0, ("Notes", "QCFlags")] or "")
                 result_df.at[0, ("Notes", "QCFlags")] = (old + "; " if old else "") + "; ".join(msgs)
@@ -992,8 +996,9 @@ For more information, see: https://github.com/fmobegi/nf-core-abotyper
         """,
     )
 
-    parser.add_argument("input_directory",
-                         help="Path to directory containing sample subdirectories with ABO phenotype results")
+    parser.add_argument("input_directory", nargs="?", default=None,
+                         help="Directory of sample folders (<id>/combined/<id>.ABOPhenotype.txt, ...). Optional when "
+                              "--samples names each sample's files")
     parser.add_argument("--panel", default=str(default_panel_path()),
                          help="Path to the variant panel file (.yaml/.json/.csv/.tsv). Default: %(default)s")
     parser.add_argument("--default-barcode", "-b", default="barcode00", metavar="BARCODE",
@@ -1008,11 +1013,14 @@ For more information, see: https://github.com/fmobegi/nf-core-abotyper
                          help="Flag A1 calls made on fewer than N reads at c.467/c.1061delC, and samples with fewer than "
                               "N reads at a primary position (depth check) (default: %(default)s)")
     parser.add_argument("--samples", "--controls", dest="samples", default=None, metavar="FILE",
-                         help="Tab-separated sample table from the samplesheet: sample folder name, control type "
-                              "('negative', 'positive' or empty) and, optionally, the sample name and barcode to "
-                              "report (otherwise taken from the folder name). Negative controls are expected to have "
-                              "few reads, and reads above --min-depth are flagged as possible contamination; positive "
-                              "controls need normal depth. --controls is the former name of this option.")
+                         help="Tab-separated sample table from the samplesheet. With a header row (id, control, "
+                              "sample, barcode, phenotype, haplotypes, evidence_status, concordance, coverage, stats, "
+                              "flagstat, nanostats; any order) it can name each sample's files, and no input directory "
+                              "is needed. Without a header: sample folder name, control type ('negative', 'positive' "
+                              "or empty) and, optionally, the sample name and barcode to report (otherwise taken from "
+                              "the folder name). Negative controls are expected to have few reads, and reads above "
+                              "--min-depth are flagged as possible contamination; positive controls need normal "
+                              "depth. --controls is the former name of this option.")
     parser.add_argument("--positive-control-pattern", default=None, metavar="REGEX",
                          help="Optional: also treat sample names matching this regular expression (case-insensitive) "
                               "as positive controls when --samples does not list them (default: off)")
@@ -1028,6 +1036,11 @@ For more information, see: https://github.com/fmobegi/nf-core-abotyper
 
 
 def validate_arguments(args):
+    if args.input_directory is None:
+        if not args.samples:
+            print("Error: give an input directory, or --samples with each sample's files.")
+            sys.exit(1)
+        return True
     if not os.path.exists(args.input_directory):
         print(f"Error: Input directory '{args.input_directory}' does not exist.")
         sys.exit(1)
@@ -1069,6 +1082,24 @@ def main():
     except (OSError, ValueError) as exc:
         print(f"! CRITICAL: could not read the sample table '{args.samples}': {exc}")
         sys.exit(1)
+
+    if args.input_directory is None:
+        # explicit inputs: lay the named files out as the sample folders the parser reads
+        args.input_directory = os.path.abspath("per_sample_processing")
+        if os.path.exists(args.input_directory):
+            print(f"! CRITICAL: '{args.input_directory}' already exists; run in an empty folder or pass it as the "
+                  "input directory")
+            sys.exit(1)
+        try:
+            staged = stage_sample_files(sample_table, args.input_directory)
+        except (OSError, ValueError) as exc:
+            print(f"! CRITICAL: could not stage the sample files: {exc}")
+            sys.exit(1)
+        if not staged:
+            print(f"! CRITICAL: --samples '{args.samples}' names no sample files; add the file columns or give an "
+                  "input directory")
+            sys.exit(1)
+        print(f"Staged the files of {staged} samples from {args.samples}")
 
     print(f"Using default barcode: {args.default_barcode}")
     print(f"Loaded panel v{panel.meta.get('panel_version', '?')} with {len(panel.variants)} variants "

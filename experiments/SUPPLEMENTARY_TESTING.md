@@ -146,7 +146,39 @@ The packaged rerun (S2) will add the read-level wrong-PASS column. **[pending]**
 - Each subsample was typed by the pipeline arm (Clair3 + pileup) and by the packaged read-level typer.
 - Scripts: `qap/qap_depth_batch.sh`, `qap/qap_depth_all.sh`, scored with `qap_eval.py`.
 
-**Results:** **[pending]**
+**How it was scored:**
+- 121 libraries with truth. The two suspected mix-up libraries (S5) are left out, because they are wrong at every depth for both methods.
+- The pipeline arm used abotyper-core 0.3.0; the read-level arm used the packaged readtyper.
+- Scripts: `qap_eval.py` and `qap/depth_detail.py`.
+
+**Genotype class, per seed.** Each cell is correct / wrong / no-call:
+
+| Target reads | Seed | Reads in subsample, median (range) | Pipeline | Read-level | Read-level PASS (all correct) |
+| --- | --- | --- | --- | --- | --- |
+| 20 | 1 | 21 (3–30) | 117 / 2 / 2 | 120 / 0 / 1 | 109 |
+| 20 | 2 | 19 (3–35) | 120 / 1 / 0 | 120 / 0 / 1 | 101 |
+| 12 | 1 | 13 (3–20) | 112 / 7 / 2 | 119 / 1 / 1 | 62 |
+| 12 | 2 | 10.5 (3–26) | 113 / 5 / 3 | 113 / 5 / 3 | 54 |
+| 8 | 1 | 8 (2–15) | 99 / 15 / 7 | 111 / 2 / 8 | 19 |
+| 8 | 2 | 7 (1–16) | 98 / 17 / 6 | 95 / 2 / 24 | 20 |
+
+**QC behaviour:**
+- **Pipeline:** every library is REVIEW at every reduced depth (all 128), so it never makes a wrong call with PASS.
+- **Read-level typer:** it passes 85–90% of libraries at about 20 reads, 45–51% at 12 and 16% at 8. Every one of those PASS calls has the right genotype class. Every wrong call it made was REVIEW.
+- **Read-level no-calls:** its no-calls are libraries with fewer than 5 informative reads (minimum not met). This is why seed 2 at 8 reads, which drew fewer reads (median 7), has 24 no-calls.
+
+**A subgroup (A1/A2), among libraries whose class was right:**
+- **Read-level typer:** found A2 in 54/55 A2 carriers at 20 reads, 53/55 and 49/50 at 12, and 49/51 and 44/46 at 8. It called A2 in 2 of about 22 non-A2 A carriers at each depth. At full depth, A2 was right 96.7% of the time.
+- **Pipeline:** at these depths it withholds the subgroup. It reports `ABO*A` with phenotype A (or AB) and REVIEW; at full depth A2 was right 97.5% of the time.
+- **Result:** with 8–20 reads, only the read-level typer resolves A1/A2.
+
+**Allele-pair stability:**
+- **Read-level typer:** 369 of its 372 PASS calls at reduced depth give the same ISBT allele pair as its full-depth call on the same library.
+- **Pipeline:** its extended genotype matches its own full-depth one in 19–26% of libraries, because it reports `ABO*A`/`ABO*O.01` without the full allele names at low depth.
+
+**Summary:**
+- **Genotype class:** both methods stay above 95% down to about 20 reads, and the read-level typer is ahead at 8–12 reads.
+- **Confidence:** below full depth, the pipeline sends every sample to REVIEW. The read-level typer makes most calls at about 20 reads with PASS: 85–90% of libraries, all right, with A1/A2 and the full allele pair resolved.
 
 ## S7. Alleles the exon 2–7 assay cannot resolve
 

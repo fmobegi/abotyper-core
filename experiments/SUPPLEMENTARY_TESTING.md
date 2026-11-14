@@ -200,6 +200,62 @@ The read-level column is the packaged typer with the review rules below. It send
 - **Genotype class:** both methods stay above 95% down to about 20 reads, and the read-level typer is ahead at 8–12 reads.
 - **Confidence:** below full depth, the pipeline sends every sample to REVIEW. The read-level typer makes most calls at about 20 reads with PASS: 85–90% of libraries, all right, with A1/A2 and the full allele pair resolved.
 
+## S6b. Large retrospective set: read-level typer vs the per-position audit
+
+**Data:** 6,241 libraries, the full retrospective set. They were typed earlier with the per-position path (pileup and Clair3; the validation audit). The packaged read-level typer (0.4.0.dev0) was then run on the same BAMs.
+
+**Libraries neither method can type:**
+- 3,348 libraries (54%) have reads aligned (median about 4,900) but none over the typed sites.
+- For the read-level typer, that means 0 informative reads.
+- In the audit, these same libraries also had 0 pileup depth at every primary position and no genotype from the pileup or Clair3.
+- So these BAMs cannot be typed by either method. This is a property of these BAMs, not a typer failure.
+
+**The rest (2,893 libraries):**
+
+| | n |
+| --- | --- |
+| Read-level PASS | 2,587 |
+| Read-level REVIEW | 189 |
+| Read-level no-call (1–4 informative reads) | 117 |
+
+**Agreement with the per-position calls:**
+
+| Compared with | Agree | of which read-level PASS | of which read-level REVIEW |
+| --- | --- | --- | --- |
+| Clair3 genotype (audit `vcf_geno`) | 2,528/2,536 (99.68%) | 2,490/2,494 (99.84%) | 38/42 |
+| Pileup genotype (audit `pile_geno`) | 2,531/2,538 (99.72%) | 2,491/2,495 (99.84%) | 40/43 |
+
+**A2:** among A carriers where both methods give the same class, the read-level typer and Clair3 agree on A2 status for 1,099/1,112 (98.8%).
+
+**Disagreements: 8 libraries with a Clair3 genotype.**
+- 4 are read-level REVIEW:
+  - a tie between AO and OO;
+  - two skewed BB/AB calls with 12–15% minor allele;
+  - one call on 8 reads.
+- 4 are read-level PASS, all with high margins:
+  - 3 call a B(A) or cisAB allele where the per-position path reported B: ABO\*BA.03 twice, ABO\*cisAB.06 once. The panel has no rules for these rare alleles, so the read-level call may be the more specific one.
+  - 1 calls A1/O where the per-position path called BO.
+- All 8 are listed for review with the restricted data.
+
+**Calls only the read-level typer made:**
+- 238 libraries had no per-position genotype but a read-level call: 92 PASS and 146 REVIEW.
+- These libraries are thin: median 16 informative reads, median pileup depth 12 at the primary sites.
+
+**Rare alleles and novel variants:**
+- The typer called a non-common ISBT allele on 672 haplotypes in 633 libraries. Most are O.01 subtypes: O.01.68, O.01.26, O.01.75, O.01.67.
+- 26 libraries carry a coding variant not in the ISBT table: 19 distinct variants.
+- Of all haplotypes, 4,783 of 4,937 (96.9%) match an ISBT allele exactly at every site they cover.
+
+**Review cut-offs checked at this scale** (heterozygotes or libraries with at least 50 informative reads):
+
+| Measure | n | Result | Cut-off |
+| --- | --- | --- | --- |
+| Minor-allele share | 1,932 heterozygotes | 0.1st percentile 0.321, none below 0.30 | 0.30 (allele-imbalance flag) |
+| Chimera share | 2,491 libraries | 99th percentile 0.076, none at or above 0.12 | 0.12 (excess-chimera flag) |
+| Foreign-read share | 2,491 libraries | 4 at or above 0.10 | 0.10 (contamination flag) |
+
+The allele-imbalance and excess-chimera rules (S3) add no REVIEW anywhere in this set.
+
 ## S7. Alleles the exon 2–7 assay cannot resolve
 
 | ISBT allele | Defining changes | Reported as |

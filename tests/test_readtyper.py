@@ -176,7 +176,7 @@ def test_aggregate_cross_check(chain, tmp_path):
     assert "ReadTyping" in hdr
     ao2, bb, o2 = res["ABO_AO2"], res["ABO_BB"], res["ABO_O2O2"]
     assert ao2["ReadTyping"].startswith("AO ABO*A1.02/ABO*O.02.01") and "disagree" not in ao2["QCFlags"]
-    assert "disagrees on genotype" in bb["QCFlags"] and bb["QCStatus"] == "REVIEW"
+    assert "methods disagree" in bb["QCFlags"] and bb["QCStatus"] == "REVIEW"
     assert "possible contamination" in o2["QCFlags"] and o2["QCStatus"] == "REVIEW"
     assert res["ABO_AA"]["ReadTyping"] == "not run"
     export = (agg / "final_export.csv").read_text().splitlines()[0]

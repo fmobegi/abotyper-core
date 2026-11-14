@@ -4,7 +4,6 @@ Draft for the manuscript supplement (November 2026). It covers the methods, the 
 Per-library calls of the validation data stay on the analysis server with the restricted data. No sample or donor
 identifiers appear here.
 
-Marked **[pending]**: results still running when this was written.
 
 ## S1. Methods compared
 
@@ -17,7 +16,7 @@ Marked **[pending]**: results still running when this was written.
 
 **Software:**
 - abotyper-core 0.3.0 for the pipeline steps;
-- readtyper from abotyper-core branch `experiment/read-level-typing`, commit 0c1cfec;
+- readtyper from abotyper-core 0.4.0.dev0 (branch `experiment/read-level-typing`; development version, not released);
 - samtools 1.22.1;
 - Clair3 v2.0.0;
 - Nextflow 26.10.6.
@@ -70,7 +69,20 @@ Marked **[pending]**: results still running when this was written.
 **Notes on these numbers:**
 - At low depth, every wrong pipeline call was flagged REVIEW; none passed QC.
 - Two seeds (8 and 12 reads, seed 2, O2O2) got 0 reads from samtools subsampling. They are counted as no-calls in every arm.
-- The read-level column above comes from the prototype (`readtyper.py`). The series is being re-typed with the packaged `abotyper-readtyper` (`rerun_read_pkg.sh` → `bench/summary_pkg.tsv`). **[pending]**
+- The read-level column above comes from the prototype (`readtyper.py`).
+
+**Packaged `abotyper-readtyper`** (abotyper-core 0.4.0.dev0, with the review rules in S3). Same BAMs, re-typed with `rerun_read_pkg.sh` and `qap/retype_all.sh`:
+
+| Depth (reads) | Correct % | Wrong % | No-call % | REVIEW % | Wrong with PASS |
+| --- | --- | --- | --- | --- | --- |
+| Full | 100 | 0 | 0 | 20 | 0 |
+| 40 | 98 | 2 | 0 | 8 | 0 |
+| 20 | 96 | 4 | 0 | 26 | 0 |
+| 12 | 94 | 0 | 6 | 46 | 0 |
+| 8 | 80 | 0 | 20 | 66 | 0 |
+| 5 | 38 | 0 | 62 | 36 | 0 |
+
+The packaged typer calls nothing on fewer than 5 informative reads. Where the prototype guessed at 5–8 reads, it gives a no-call: no wrong calls at 12, 8 or 5 reads, and no wrong call with PASS at any depth.
 
 ## S3. Test samples: contamination (stress) series
 
@@ -82,16 +94,24 @@ Marked **[pending]**: results still running when this was written.
 
 | Spike | Read-level | Pipeline | Pileup only |
 | ----- | ---------- | -------- | ----------- |
-| 5% | 90 / – | 90 / 1 | 100 / 0 |
-| 10% | 90 / – | 80 / 1 | 100 / 0 |
-| 20% | 80 / – | 80 / 1 | 50 / 0 |
+| 5% | 90 / 0 | 90 / 1 | 100 / 0 |
+| 10% | 90 / 0 | 80 / 1 | 100 / 0 |
+| 20% | 80 / 0 | 80 / 1 | 50 / 0 |
+
+The read-level column is the packaged typer with the review rules below. It sends 40%, 40% and 90% of the spiked samples to REVIEW.
 
 **What happened in the wrong pipeline PASS:**
 - **Setup:** the O2O2 sample already carries about 12% reads that look like A1. With 5% more foreign reads, the pipeline called ABO\*A1.01/O.02.02 with QC PASS, phenotype A instead of O.
 - **Read-level typer:** it made the same call. Unlike the pipeline, it flagged the sample: 14–29% of reads fit neither called allele.
 - **Review rule:** sending samples above 10% of such reads to REVIEW catches every wrong O2O2 call.
 
-The packaged rerun (S2) will add the read-level wrong-PASS column. **[pending]**
+**Review rules added after this test:**
+- **What went wrong:** in the packaged typer, the contaminant could pose as the second allele. O2O2 + 10% or 20% A1 was called A1/O2, and BB + 20% AA was called A1/B. Both passed: the foreign-read share stays low because the contaminant is "explained" by the called allele.
+- **Rule 1, allele imbalance:** a heterozygote whose minor allele is under 30% of reads, when P(≤k \| 50:50) < 10⁻³, goes to REVIEW.
+- **Rule 2, excess chimeras:** a chimera share of at least 12%, with at least 5 chimeric reads, goes to REVIEW.
+- **Why these cut-offs:** in the 129 QAP libraries at full depth, heterozygotes stay at a minor share of 0.34 or more, and the chimera share stays under 0.09.
+- **Simulation before the change (`qap/sim_rules.py`):** the rules sent all 3 wrong contamination calls to REVIEW and changed no other call: 126 QAP full-depth calls, 716 QAP depth-series calls and 219 test-sample depth calls.
+- **Re-typing after the change:** confirmed the same.
 
 ## S4. Processing settings (from S2)
 

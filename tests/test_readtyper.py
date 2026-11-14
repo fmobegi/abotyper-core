@@ -88,6 +88,12 @@ def test_allele_balance(model):
     # at low depth a skewed split is sampling noise: the heterozygote stands
     res = rt.type_sample(_obs(table, "ABO*O.01.01", 10) + _obs(table, "ABO*B.01", 2), table, seq, coding)
     assert res.summary["genotype"] == "BO"
+    # a deep, clearly skewed heterozygote (a contaminant posing as the second allele) stays het but goes to REVIEW
+    s = rt.type_sample(_obs(table, "ABO*B.01", 92) + _obs(table, "ABO*A1.01", 23), table, seq, coding).summary
+    assert s["genotype"] == "AB" and "allele imbalance" in s["flags"] and s["status"] == "REVIEW"
+    # a balanced heterozygote is not flagged
+    s = rt.type_sample(_obs(table, "ABO*B.01", 50) + _obs(table, "ABO*A1.01", 40), table, seq, coding).summary
+    assert "imbalance" not in s["flags"] and s["status"] == "PASS"
 
 
 def test_third_haplotype_flag(model):
@@ -194,3 +200,8 @@ def test_chimeras_are_not_contamination(model):
     s = rt.type_sample(reads, table, seq, coding).summary
     assert s["genotype"] == "AO" and s["chimera_share"] > 0.05
     assert s["unexplained_share"] < 0.1 and "contamination" not in s["flags"]
+    # an excess of chimeras (well above what PCR makes in clean libraries) goes to REVIEW
+    reads = (_obs(table, "ABO*A1.01", 40) + _obs(table, "ABO*O.01.02", 40)
+             + _chimeras(table, "ABO*A1.01", "ABO*O.01.02", 20))
+    s = rt.type_sample(reads, table, seq, coding).summary
+    assert "chimeras" in s["flags"] and s["status"] == "REVIEW"

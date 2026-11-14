@@ -59,9 +59,11 @@ MAX_CANDIDATES = 40           # alleles considered for the pair (plus the common
 REVIEW_READS = 10             # fewer typed reads: REVIEW
 MIN_MARGIN = 10.0             # log-likelihood margin over the best pair of another genotype class
 MAX_UNEXPLAINED = 0.10        # share of foreign reads (fit neither called allele, not chimeras of the two)
-MAX_CHIMERA = 0.25            # share of chimeric reads worth flagging (long-amplicon PCR makes some)
+MAX_CHIMERA = 0.12            # chimeric-read share worth flagging (long-amplicon PCR makes some; clean libraries
+MIN_CHIMERA_READS = 5         # stay under 0.09), when at least this many reads are chimeric
 MIN_AF = 0.20                 # minor allele share below which (and P_het < BALANCE_P) the call is homozygous
-BALANCE_P = 1e-3
+SKEW_AF = 0.30                # heterozygote with a minor share below this (and P_het < BALANCE_P): REVIEW, a
+BALANCE_P = 1e-3              # contaminant can pose as the second allele (clean heterozygotes stay above 0.34)
 CONS_SUPPORT, CONS_MIN_READS = 0.6, 2   # consensus state needs this read share and depth
 NOVEL_SUPPORT, NOVEL_MIN_READS = 0.7, 3
 
@@ -462,6 +464,9 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         major = ia if to_a >= to_b else ib
         flags.append(f"minor allele {names[ib if major == ia else ia]} on {minor:.0%} of reads: called homozygous")
         ia = ib = major
+    elif ia != ib and minor < SKEW_AF and binom_tail(k, n_ab) < BALANCE_P:
+        flags.append(f"allele imbalance: minor allele on {minor:.0%} of reads (a heterozygote gives ~50%): "
+                     "possible contamination")
 
     # third haplotype: reads another allele explains much better than either called allele are PCR chimeras of the
     # two (they switch from one allele to the other along the amplicon) or foreign (contamination)
@@ -520,7 +525,7 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
     if unexpl_share >= MAX_UNEXPLAINED:
         flags.append(f"{unexpl_share:.0%} of reads fit neither allele (best other: "
                      f"{third.most_common(1)[0][0] if third else '?'}): possible contamination")
-    if chimera_share >= MAX_CHIMERA:
+    if chimera_share >= MAX_CHIMERA and int(chimeric.sum()) >= MIN_CHIMERA_READS:
         flags.append(f"{chimera_share:.0%} of reads are chimeras of the two alleles")
     if novel:
         flags.append("novel variants: " + ",".join(novel))

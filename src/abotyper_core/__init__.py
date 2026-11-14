@@ -10,7 +10,7 @@ Part of abotyper-core (https://github.com/fmobegi/abotyper-core), the ABO typing
 Author: Fredrick M. Mobegi; contributors: Benedict Matern, Mathijs Groeneweg. MIT License (see LICENSE).
 """
 
-__version__ = "0.4.0.dev1"
+__version__ = "0.4.0.dev2"
 
 from .panel import Panel, PanelError, VariantMarker, default_panel_path, load_panel  # noqa: E402
 

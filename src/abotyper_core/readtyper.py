@@ -66,6 +66,9 @@ SKEW_AF = 0.30                # heterozygote with a minor share below this (and 
 BALANCE_P = 1e-3              # contaminant can pose as the second allele (clean heterozygotes stay above 0.34)
 CONS_SUPPORT, CONS_MIN_READS = 0.6, 2   # consensus state needs this read share and depth
 NOVEL_SUPPORT, NOVEL_MIN_READS = 0.7, 3
+# a known (ISBT) site where the haplotype consensus differs from its called allele: reported per haplotype, and a
+# REVIEW flag when it is well supported (possible new allele, or a recombinant of known ones)
+MISMATCH_SUPPORT, MISMATCH_MIN_READS = 0.8, 5
 
 _CHANGE = re.compile(r"c\.(\d+)([+-]\d+)?(?:_(\d+)([+-]\d+)?)?"
                      r"(?:([ACGT])>([ACGT])|(del|dup)([ACGT]*)|ins([ACGT]+))$")
@@ -319,6 +322,36 @@ class Haplotype:
     nearest_mismatches: int
     novel: List[str]
     note: str = ""
+    mismatches: List[str] = field(default_factory=list)      # known sites differing from the called allele
+    supported_mismatches: int = 0                             # of those, with >= MISMATCH_* support
+
+
+def site_label(site: "Site", coding: Dict[int, int]) -> str:
+    """c. position of a site (g. NG_006669.2 position when it is outside the coding exons)."""
+    c = coding.get(site.lo)
+    return f"c.{c}" if c is not None else f"g.{site.lo}"
+
+
+def allele_mismatches(reads: Sequence[ReadObs], idx: Sequence[int], cons: Dict[int, object], allele: int,
+                      table: AlleleTable, coding: Dict[int, int]) -> Tuple[List[str], int]:
+    """Known sites where the haplotype consensus differs from `allele`, as 'c.220 C>T (12/12 reads)', and how many
+    of them reach MISMATCH_SUPPORT and MISMATCH_MIN_READS."""
+    out, strong = [], 0
+    exp = table.expected[allele]
+    for i in sorted(cons, key=lambda i: table.sites[i].lo):
+        s = table.sites[i]
+        e, v = exp.get(i, s.ref_state), cons[i]
+        if e == v:
+            continue
+        n = sum(1 for r in idx if i in reads[r].sites)
+        k = sum(1 for r in idx if reads[r].sites.get(i) == v)
+        if s.kind == "snv":
+            what = f"{e}>{v}"
+        else:
+            what = f"indel {int(e):+d}>{int(v):+d} bp" + (f" ({s.ref} run)" if s.ref else "")
+        out.append(f"{site_label(s, coding)} {what} ({k}/{n} reads)")
+        strong += n >= MISMATCH_MIN_READS and k / n >= MISMATCH_SUPPORT
+    return out, strong
 
 
 def consensus_sites(reads: Sequence[ReadObs], idx: Sequence[int]) -> Dict[int, object]:
@@ -503,8 +536,9 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
                 note = f"rare allele {name} not confirmed by haplotype consensus: {best_common} used"
                 flags.append(note)
                 name = best_common
+        mm, strong = allele_mismatches(reads, idx, cons, names.index(name), table, coding)
         haps.append(Haplotype(name, len(idx), cons, exact, nearest, nm,
-                              novel_variants(reads, idx, seq, coding, table), note))
+                              novel_variants(reads, idx, seq, coding, table), note, mm, strong))
         final.append(name)
     if len(final) == 1:
         final = final * 2
@@ -516,6 +550,8 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
     if len(classes_tied) > 1:
         flags.append("tied pairs of different genotype classes: " + ",".join(sorted(classes_tied)))
     novel = sorted({v for h in haps for v in h.novel})
+    off_allele = [f"{h.allele} at {', '.join(m.split(' (')[0] for m in h.mismatches)}"
+                  for h in haps if h.supported_mismatches]
 
     status = "PASS"
     if len(reads) < REVIEW_READS:
@@ -529,6 +565,9 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         flags.append(f"{chimera_share:.0%} of reads are chimeras of the two alleles")
     if novel:
         flags.append("novel variants: " + ",".join(novel))
+    if off_allele:
+        flags.append("haplotype differs from its ISBT allele at known site(s): " + "; ".join(off_allele)
+                     + " (possible new allele)")
     if flags:
         status = "REVIEW"
     summary = {
@@ -539,16 +578,19 @@ def type_sample(reads: Sequence[ReadObs], table: AlleleTable, seq: str, coding: 
         "reads_a_b": f"{to_a}/{to_b}", "minor_allele_share": round(minor, 3),
         "unexplained_share": round(unexpl_share, 3), "chimera_share": round(chimera_share, 3),
         "third_allele": third.most_common(1)[0][0] if third else "",
-        "novel_variants": ";".join(novel), "flags": "; ".join(flags),
+        "novel_variants": ";".join(novel),
+        "haplotype_mismatches": "; ".join(f"{h.allele}: {', '.join(h.mismatches)}" for h in haps if h.mismatches),
+        "flags": "; ".join(flags),
     }
     return TypingResult(summary, haps)
 
 
 SUMMARY_FIELDS = ["sample", "reads_aligned", "reads_typed", "allele_1", "allele_2", "genotype", "phenotype",
                   "status", "loglik", "margin", "alt_pair", "tied_pairs", "reads_a_b", "minor_allele_share",
-                  "unexplained_share", "chimera_share", "third_allele", "novel_variants", "flags"]
+                  "unexplained_share", "chimera_share", "third_allele", "novel_variants", "haplotype_mismatches",
+                  "flags"]
 HAPLOTYPE_FIELDS = ["sample", "haplotype", "allele", "reads", "isbt_exact_matches", "nearest_isbt",
-                    "nearest_mismatches", "sites_called", "novel_variants", "note"]
+                    "nearest_mismatches", "sites_called", "allele_mismatches", "novel_variants", "note"]
 
 
 def run(bam: Path, ref: Path, sample: str, panel: Optional[str] = None, isbt: Optional[Path] = None,
@@ -581,7 +623,8 @@ def write_outputs(res: TypingResult, sample: str, out: Path, haplotypes_out: Opt
                 w.writerow({"sample": sample, "haplotype": i, "allele": h.allele, "reads": h.reads,
                             "isbt_exact_matches": ",".join(h.exact[:20]) + (",..." if len(h.exact) > 20 else ""),
                             "nearest_isbt": h.nearest, "nearest_mismatches": h.nearest_mismatches,
-                            "sites_called": len(h.consensus), "novel_variants": ";".join(h.novel),
+                            "sites_called": len(h.consensus), "allele_mismatches": "; ".join(h.mismatches),
+                            "novel_variants": ";".join(h.novel),
                             "note": h.note})
 
 

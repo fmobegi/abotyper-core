@@ -205,3 +205,23 @@ def test_chimeras_are_not_contamination(model):
              + _chimeras(table, "ABO*A1.01", "ABO*O.01.02", 20))
     s = rt.type_sample(reads, table, seq, coding).summary
     assert "chimeras" in s["flags"] and s["status"] == "REVIEW"
+
+
+def test_haplotype_off_its_allele_is_flagged(model):
+    """A haplotype that differs from its called ISBT allele at a known site is reported and goes to REVIEW (seen in
+    the retrospective set: ABO*O.01.24 carrying c.220C>T)."""
+    seq, _, table, coding = model
+    hap = _obs(table, "ABO*O.01.24", 40)
+    i220 = next(i for i, s in enumerate(table.sites) if s.kind == "snv" and coding.get(s.lo) == 220)
+    for r in hap:
+        r.sites[i220] = "T"
+    res = rt.type_sample(_obs(table, "ABO*A1.01", 40) + hap, table, seq, coding)
+    s = res.summary
+    assert s["genotype"] == "AO" and "ABO*O.01.24" in (s["allele_1"], s["allele_2"])
+    assert "c.220 C>T (40/40 reads)" in s["haplotype_mismatches"]
+    assert "possible new allele" in s["flags"] and s["status"] == "REVIEW"
+    off = next(h for h in res.haplotypes if h.allele == "ABO*O.01.24")
+    assert off.supported_mismatches == 1
+    # the clean pair is not flagged
+    s = rt.type_sample(_obs(table, "ABO*A1.01", 40) + _obs(table, "ABO*O.01.24", 40), table, seq, coding).summary
+    assert s["haplotype_mismatches"] == "" and s["status"] == "PASS"

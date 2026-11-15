@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.4.0 (unreleased)
+
+Development versions 0.4.0.dev0 to 0.4.0.dev3 are on TestPyPI; nf-core/abotyper uses them on its read-level typing
+branch.
+
+- New command `abotyper-readtyper`: read-level typing. Every read of the exon 2-7 amplicon is scored against every
+  ISBT ABO allele (error rates per SNV, homopolymer indel and other indel) and the allele pair that best explains all
+  reads is called, with its likelihood margin to the best pair of another genotype class. Needs only the BAM and
+  the NG_006669.2 FASTA (a pure-Python BAM reader; no Clair3, pysam or samtools).
+  - At least 5 informative reads, else NOCALL; REVIEW below 10.
+  - Allele balance: a heterozygote whose minor allele is under 20% of reads (and unlikely under 50:50,
+    P < 10^-3) is called homozygous; under 30% it stays heterozygous and goes to REVIEW (a contaminant can pose as
+    the second allele).
+  - Third haplotype: reads that another allele explains much better than either called allele are split into
+    chimeras of the two (PCR) and foreign reads; 10% or more foreign reads, or 12% and 5 reads or more chimeras,
+    go to REVIEW.
+  - Haplotype consensus: the reads of each allele are pooled. A rare allele is kept only if the consensus fits it
+    better than every common allele; coding variants not in the ISBT table are reported on their haplotype; known
+    sites where the consensus differs from its called allele are reported (`haplotype_mismatches`, and per
+    haplotype `allele_mismatches`), and send the sample to REVIEW ("possible new allele") when backed by at least
+    5 reads and 80% of them.
+  - Recurring haplotypes that ISBT does not list are named from a bundled table (`abo_unlisted_haplotypes.tsv`,
+    `--unlisted`) and reported with a note (`notes`) instead of a REVIEW flag. First entry: ABO*O.01.68 + c.595C>T,
+    reported as `ABO*O.01.12-like` (104 of 2,776 typed libraries of a retrospective set, all confirmed by Clair3).
+- `abotyper-aggregate` combines the read-level call with the per-position call: the read-level call is primary,
+  a disagreement goes to REVIEW, and a sample the read-level typer cannot call keeps the per-position call with
+  REVIEW. A sample with only read-level typing is reported on its own. New evidence columns (`ReadTyping`,
+  `PrimaryMethod`, `MethodAgreement`, `Margin`, `AlleleBalance`, `PositionQC`), a positive control's expected
+  genotype (`expected` column of `--samples`), possible contamination sources named from the other samples of the
+  run, and two run-level files: `ABO_novel_variants.tsv` and `ABO_readtyping_mqc.tsv` (MultiQC). Read-level files
+  are read from `<id>/read_typing/` or named in `--samples` (`readtyping`, `readtyping_haplotypes`).
+
 ## 0.3.1 (unreleased)
 
 - `abotyper-aggregate` takes explicit inputs: with a header row, `--samples` can name each sample's files

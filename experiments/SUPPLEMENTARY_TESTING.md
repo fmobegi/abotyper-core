@@ -256,6 +256,47 @@ The read-level column is the packaged typer with the review rules below. It send
 
 The allele-imbalance and excess-chimera rules (S3) add no REVIEW anywhere in this set.
 
+**Review of the 8 disagreements** (per-library evidence from the audit and the read-level haplotypes):
+- **3 libraries (2 donors), read-level PASS:** the read-level typer names a rare allele where the per-position path reported B.
+  - ABO\*BA.03 (twice, one donor, two runs): B.01 without c.703G>A. The audit's own variant list for both libraries has every B marker except c.703.
+  - ABO\*cisAB.06: B.01 without c.526C>G. The audit lists every B marker except c.526.
+  - Both haplotypes match their ISBT alleles exactly at 134 sites, with balanced allele splits and margins of 665–1,152.
+  - The per-position panel has no rules for these alleles, so it fell back to B.
+- **1 library, read-level PASS in 0.4.0.dev0:** A1/O versus the per-position BO, a phenotype A versus B difference.
+  - Phased reads put c.261del on the same haplotype as the B markers: ABO\*O.01.24, an O allele on a B background.
+  - That haplotype also carries c.220C>T (172/190 reads), which O.01.24 does not list.
+  - From 0.4.0.dev2 this goes to REVIEW as a possible new allele.
+- **4 libraries, read-level REVIEW:**
+  - a tie between O.09.01 and AW.31.02-05, which ISBT defines by the same four exon 7 changes;
+  - two skewed BB/AB libraries with 11–13% foreign reads;
+  - one library of 15 reads.
+
+**Haplotypes that differ from their ISBT allele (0.4.0.dev2):**
+- **Effect on calls:** none of the 6,241 calls change between 0.4.0.dev0 and dev2. 134 PASS calls go to REVIEW, all for this reason; 111 of them have at least 200 informative reads.
+- **One recurring pattern:** 104 of the 134 are the same haplotype, ABO\*O.01.68 + c.595C>T.
+  - Read support: median 97%, lowest 87%, at a median of 315 reads per haplotype.
+  - Sequence context: no homopolymer.
+  - Clair3 confirmation: the per-position path's Clair3 calls have c.595C>T in all 104 libraries, and in only 1 of the 119 O.01.68 libraries without the mismatch.
+  - Backgrounds: O.01.01 (51), A1.01 (20), O.01.02 (13), B.01 (6), A2.01 (5) and others.
+- **Interpretation:** c.595C>T defines ABO\*O.01.12, which ISBT lists without the exon 3–4 changes (c.106, c.188, c.189). Many O alleles were first described from exons 6–7 only. The haplotype is most likely O.01.12 carrying exon 3–4 changes that its definition does not list. It is present in about 3.7% of typed libraries.
+- **How 0.4.0.dev3 reports it:** as ABO\*O.01.12-like, from a bundled table of recurring haplotypes that ISBT does not list (`abo_unlisted_haplotypes.tsv`). It carries a note and keeps PASS; any other difference still goes to REVIEW. Replayed on the dev2 results, this gives:
+
+| Version | PASS | REVIEW | No-call |
+| --- | --- | --- | --- |
+| 0.4.0.dev0 | 2,587 | 189 | 3,465 |
+| 0.4.0.dev2 | 2,453 | 323 | 3,465 |
+| 0.4.0.dev3 (replayed) | 2,555 | 221 | 3,465 |
+
+- **The remaining "possible new allele" REVIEWs:** 32, for example c.189C>T and c.220C>T on O.01.83 or O.16, and c.829A>G on O.01.36.
+
+**Overlap with the QAP set (S5):**
+- 103 of the 104 retrospective libraries from QAP donors are the QAP libraries themselves, with identical read counts. The QAP set is therefore not an independent check of this set.
+- Re-typed with 0.4.0.dev3, every donor gets the same genotype class as before.
+- The one independent library pair of the same donor differs at the allele level:
+  - O.01.01/O.01.02 on 606 reads, against O.01.01/O.01.75 on 9,932 reads.
+  - O.01.75 is O.01.02 + c.542G>A.
+  - This points to a sample mix-up or a site missed in one library. It is listed for review.
+
 ## S7. Alleles the exon 2–7 assay cannot resolve
 
 | ISBT allele | Defining changes | Reported as |

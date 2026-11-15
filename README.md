@@ -39,6 +39,31 @@ Python 3.11 or newer. Dependencies: pandas, numpy, pyyaml, xlsxwriter and openpy
 Each command takes `--help`. Commands that read the panel default to the bundled
 `abotyper_core/data/abo_variant_panel.yaml`; pass `--panel` to use another one.
 
+### Read-level typing
+
+```bash
+abotyper-readtyper --bam S1.bam --ref NG_006669v2.fasta --sample S1 \
+    --out S1.ReadTyping.tsv --haplotypes-out S1.ReadTypingHaplotypes.tsv
+```
+
+Each long read spans the exon 2-7 amplicon, so each read is a haplotype. `abotyper-readtyper` scores every read
+against every ISBT ABO allele and calls the pair that best explains all of them. It needs only the BAM (aligned to
+NG_006669.2) and that FASTA.
+
+`S1.ReadTyping.tsv` has one row: the two ISBT alleles, genotype and phenotype, status (`PASS`, `REVIEW` or
+`NOCALL`), the likelihood margin and next-best pair, allele balance (`reads_a_b`, `minor_allele_share`), the share
+of foreign reads and of chimeras, novel coding variants, `haplotype_mismatches` (known sites where a haplotype
+differs from its allele, with read support), `flags` (the reasons for REVIEW) and `notes` (information that does not
+change the status). `S1.ReadTypingHaplotypes.tsv` has one row per haplotype: allele, reads, the ISBT alleles its
+consensus matches exactly, the nearest allele and mismatches, `allele_mismatches` and novel variants.
+
+A haplotype that differs from its ISBT allele at known sites goes to REVIEW as a possible new allele, unless it is
+in the bundled table of recurring haplotypes that ISBT does not list (`abo_unlisted_haplotypes.tsv`): those are
+reported under the table's name with a note. `--unlisted <file>` uses another table, `--unlisted none` none.
+
+`abotyper-aggregate` picks up `<id>/read_typing/<id>.ReadTyping.tsv` (or the `readtyping` column of `--samples`) and
+makes the read-level call the primary call, with the per-position call as the second line of evidence.
+
 ### Checking the panel against ISBT
 
 ```bash

@@ -215,13 +215,18 @@ def test_haplotype_off_its_allele_is_flagged(model):
     i220 = next(i for i, s in enumerate(table.sites) if s.kind == "snv" and coding.get(s.lo) == 220)
     for r in hap:
         r.sites[i220] = "T"
-    res = rt.type_sample(_obs(table, "ABO*A1.01", 40) + hap, table, seq, coding)
+    # with the table of unlisted haplotypes switched off, the difference is a possible new allele
+    res = rt.type_sample(_obs(table, "ABO*A1.01", 40) + hap, table, seq, coding, unlisted={})
     s = res.summary
     assert s["genotype"] == "AO" and "ABO*O.01.24" in (s["allele_1"], s["allele_2"])
     assert "c.220 C>T (40/40 reads)" in s["haplotype_mismatches"]
     assert "possible new allele" in s["flags"] and s["status"] == "REVIEW"
     off = next(h for h in res.haplotypes if h.allele == "ABO*O.01.24")
     assert off.supported_mismatches == 1
+    # with the bundled table it is a recurring, Clair3-confirmed haplotype: named, noted, PASS
+    s = rt.type_sample(_obs(table, "ABO*A1.01", 40) + hap, table, seq, coding).summary
+    assert "ABO*O.01.24[+c.220C>T]" in (s["allele_1"], s["allele_2"]) and s["genotype"] == "AO"
+    assert s["status"] == "PASS" and "possible new allele" not in s["flags"] and "O.01.24 + c.220 C>T" in s["notes"]
     # the clean pair is not flagged
     s = rt.type_sample(_obs(table, "ABO*A1.01", 40) + _obs(table, "ABO*O.01.24", 40), table, seq, coding).summary
     assert s["haplotype_mismatches"] == "" and s["status"] == "PASS"
@@ -254,3 +259,14 @@ def test_recurring_unlisted_haplotype_is_named(model):
         r.sites[i220] = "T"
     s = rt.type_sample(_obs(table, "ABO*O.01.01", 40) + hap, table, seq, coding).summary
     assert s["status"] == "REVIEW" and "possible new allele" in s["flags"]
+
+
+def test_named_haplotypes_match_their_isbt_allele():
+    """A haplotype named from the table of unlisted haplotypes agrees with a per-position call of the allele it was
+    called as (no false 'methods disagree'), and still disagrees with a different allele."""
+    from abotyper_core.aggregate import ABOReportParser as P
+    assert P._alleles_compatible("ABO*O.01.24", "ABO*O.01.24[+c.220C>T]")
+    assert P._alleles_compatible("ABO*O.01.68", "ABO*O.01.12-like")
+    assert P._alleles_compatible("ABO*O.01", "ABO*O.01.83[+c.189C>T;+c.220C>T]")
+    assert not P._alleles_compatible("ABO*B.01", "ABO*O.01.24[+c.220C>T]")
+    assert not P._alleles_compatible("ABO*O.01.02", "ABO*O.01.36[-c.829G>A]")

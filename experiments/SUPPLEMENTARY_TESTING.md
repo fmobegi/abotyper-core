@@ -311,6 +311,7 @@ How the check works:
 Reading of the check:
 - **Three patterns are strong candidates:** O.01.83 + c.189T/c.220T, O.01.36 without c.829A and O.01.24 + c.220T. Each has at least 4 libraries, at least 90% read support, full agreement with Clair3 and no homopolymer context. Like c.595, they are candidates for the table of unlisted haplotypes once named and confirmed (for example by Sanger sequencing of one carrier each).
 - **The others stay REVIEW** until more carriers are seen.
+- **Added in 0.4.1:** the three strong candidates are now in the table, as `ABO*O.01.83[+c.189C>T;+c.220C>T]`, `ABO*O.01.36[-c.829G>A]` and `ABO*O.01.24[+c.220C>T]`. Replayed on the 0.4.0 run, they name 14 haplotypes and move 13 libraries from REVIEW to PASS (2,568 PASS, 208 REVIEW); the 14th has other flags too.
 
 
 **Overlap with the QAP set (S5):**

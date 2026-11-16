@@ -714,9 +714,25 @@ class ABOReportParser(CallingMixin, ReconcileMixin, ReportMixin):
     # QC: replicate cross-check and run-level summary
     # -----------------------------------------------------------------
     @staticmethod
-    def _alleles_compatible(x: str, y: str) -> bool:
+    def _allele_forms(name: str) -> set:
+        """A name and the ISBT names it stands for: a haplotype named from the table of unlisted haplotypes
+        (ABO*O.01.24[+c.220C>T], ABO*O.01.12-like) also stands for the ISBT allele it was called as."""
+        from .readtyper import _default_unlisted
+        n = name.strip()
+        forms = {n, re.sub(r"\[.*\]$", "", n)}
+        if n.endswith("-like"):
+            forms.add(n[:-len("-like")])
+        forms |= {called for (called, _sites), (report_as, _p, _e) in _default_unlisted().items() if report_as == n}
+        return forms
+
+    @classmethod
+    def _alleles_compatible(cls, x: str, y: str) -> bool:
         """Two ISBT-style allele names do not conflict when they are equal or one is a less specific form of
-        the other (ABO*A2 / ABO*A2.01, ABO*O.01 / ABO*O.01.01, or a bare ABO*A / ABO*A1.01)."""
+        the other (ABO*A2 / ABO*A2.01, ABO*O.01 / ABO*O.01.01, or a bare ABO*A / ABO*A1.01). A haplotype named from
+        the table of unlisted haplotypes is compatible with every name its forms are compatible with."""
+        fx, fy = cls._allele_forms(x), cls._allele_forms(y)
+        if len(fx) > 1 or len(fy) > 1:
+            return any(cls._alleles_compatible(p, q) for p in fx for q in fy if (p, q) != (x.strip(), y.strip()))
         a, b = x.replace("ABO*", "").strip(), y.replace("ABO*", "").strip()
         if a == b:
             return True

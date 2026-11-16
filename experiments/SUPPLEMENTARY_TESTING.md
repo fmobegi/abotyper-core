@@ -315,6 +315,17 @@ So of the 4 confident disagreements, all 4 favour the read-level call:
 
 None of the 9 cases is a read-level typing error.
 
+**A2 alleles (read-level vs per-position, same 6,241 set):**
+
+| Finding | Libraries | Detail |
+| --- | --- | --- |
+| A2 in both | 309 | of 1,112 A carriers typed by both methods with the same genotype class |
+| A2 found only by read-level typing | 10 (all PASS) | A2.06 ×4 (3 donors; c.1061del alone defines it, the per-position rule also needs c.467), A2.05 ×1 (c.467T + c.1009A>G, no rule in the panel), A2.01 ×5 (Clair3 missed one of the two markers, the pileup and the reads show both) |
+| Per-position A2 reclassified as weak A | 3 (2 donors) | ABO\*AW.26: the A2.01 changes plus c.527G>A |
+| A2 in libraries only read-level typing could type | 24 (9 PASS) | A2.01; thin libraries (median 16 informative reads) where the per-position path withholds the A subgroup |
+
+Across the set, the read-level typer calls A2.01 348 times, A2.06 8 times and A2.05 once. In Supplementary_Data.xlsx these are sheets S1e (discordant libraries) and S1f (A2 findings), with de-identified sample tags.
+
 ## S7. Alleles the exon 2–7 assay cannot resolve
 
 | ISBT allele | Defining changes | Reported as |

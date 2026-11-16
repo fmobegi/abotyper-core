@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1 (unreleased)
+## 0.4.1 (2026-11-16)
 
 - Three more recurring haplotypes in `abo_unlisted_haplotypes.tsv`, each seen in 4-6 libraries of the
   retrospective set with at least 90% read support and confirmed by Clair3 in every library:

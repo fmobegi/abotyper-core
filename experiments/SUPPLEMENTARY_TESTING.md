@@ -297,6 +297,24 @@ The allele-imbalance and excess-chimera rules (S3) add no REVIEW anywhere in thi
   - O.01.75 is O.01.02 + c.542G>A.
   - This points to a sample mix-up or a site missed in one library. It is listed for review.
 
+**Read-by-read review of the 8 disagreements and the c.542 pair** (`hpc/inspect_sites.py`, 0.4.0.dev3; read counts are reads assigned to each allele):
+
+| Case | Deciding evidence | Verdict |
+| --- | --- | --- |
+| cisAB.06 (1 library) | B-type haplotype (437 reads): c.526 C on 433 (B.01 needs G); c.657T, c.703A, c.796A, c.803C, no c.261del | read-level correct: cisAB.06, not B.01 |
+| B(A).03 (1 donor, 2 runs) | B-type haplotype: c.703 G on 172/173 and 191/194 (B.01 needs A); c.526G, c.657T, c.796A, c.803C present | read-level correct in both runs: B(A).03, not B.01 |
+| A1/O vs BO (1 library) | c.261del and c.796A on the same reads: 167 reads del+A, 163 neither, 34 mixed (chimeras); O haplotype also c.220T on 172/190 | per-position BO is wrong: A1 + an O.01.24-like allele with c.220T (phenotype A, not B); the c.220T allele is a candidate new allele |
+| O.09.01 vs AW.31.02-05 (1 library) | second haplotype (1,974 reads): no c.261del, c.646A, c.681A, c.771T, c.829A, c.467C | unresolvable from exons 2–7: the two alleles have the same definition there; REVIEW is right; serology (O vs weak A) needed |
+| BB/AB (2 libraries) | thousands of reads aligned but only 36 and 52 reach the typed sites; skewed split, 11–13% foreign reads | not typable from these libraries; re-test |
+| 15-read library | 8 informative reads | not typable; re-test |
+| c.542 pair (1 donor) | retrospective library: c.542 G on 91/99 reads of the O.01.02-type haplotype; QAP library: c.542 A on 4,310/4,520 | the two libraries come from different individuals (O.01.02 vs O.01.75): a sample identity problem, not a typing error |
+
+So of the 4 confident disagreements, all 4 favour the read-level call:
+- 3 because the per-position panel has no rules for B(A) and cisAB alleles;
+- 1 because only whole-read phasing shows that c.261del sits on the B-background allele.
+
+None of the 9 cases is a read-level typing error.
+
 ## S7. Alleles the exon 2–7 assay cannot resolve
 
 | ISBT allele | Defining changes | Reported as |

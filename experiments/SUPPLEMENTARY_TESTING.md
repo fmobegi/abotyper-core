@@ -279,15 +279,40 @@ The allele-imbalance and excess-chimera rules (S3) add no REVIEW anywhere in thi
   - Clair3 confirmation: the per-position path's Clair3 calls have c.595C>T in all 104 libraries, and in only 1 of the 119 O.01.68 libraries without the mismatch.
   - Backgrounds: O.01.01 (51), A1.01 (20), O.01.02 (13), B.01 (6), A2.01 (5) and others.
 - **Interpretation:** c.595C>T defines ABO\*O.01.12, which ISBT lists without the exon 3–4 changes (c.106, c.188, c.189). Many O alleles were first described from exons 6–7 only. The haplotype is most likely O.01.12 carrying exon 3–4 changes that its definition does not list. It is present in about 3.7% of typed libraries.
-- **How 0.4.0.dev3 reports it:** as ABO\*O.01.12-like, from a bundled table of recurring haplotypes that ISBT does not list (`abo_unlisted_haplotypes.tsv`). It carries a note and keeps PASS; any other difference still goes to REVIEW. Replayed on the dev2 results, this gives:
+- **How 0.4.0 reports it:** as ABO\*O.01.12-like, from a bundled table of recurring haplotypes that ISBT does not list (`abo_unlisted_haplotypes.tsv`). It carries a note and keeps PASS; any other difference still goes to REVIEW. Re-typing the whole set with the released 0.4.0 gives exactly the numbers predicted by replaying the rule on the dev2 results:
 
 | Version | PASS | REVIEW | No-call |
 | --- | --- | --- | --- |
 | 0.4.0.dev0 | 2,587 | 189 | 3,465 |
 | 0.4.0.dev2 | 2,453 | 323 | 3,465 |
-| 0.4.0.dev3 (replayed) | 2,555 | 221 | 3,465 |
+| 0.4.0 (released; whole set re-typed) | 2,555 | 221 | 3,465 |
 
-- **The remaining "possible new allele" REVIEWs:** 32, for example c.189C>T and c.220C>T on O.01.83 or O.16, and c.829A>G on O.01.36.
+- **Calls across versions:** no genotype or allele changes between dev2 and 0.4.0 (counting O.01.12-like as O.01.68), and no genotype-class changes against dev0.
+- **O.01.12-like:** 104 libraries; 102 PASS, 2 REVIEW for unrelated reasons (a small margin, a novel variant).
+- **Net change from dev0:** 32 PASS calls go to REVIEW, all as possible new alleles.
+
+**Recurring "possible new allele" patterns, checked against Clair3** (`hpc/check_recurring_haplotypes.py`; 34 libraries with this flag in 0.4.0).
+
+How the check works:
+- A haplotype that carries a change its ISBT allele lacks should have that change called by Clair3 in the same library.
+- A haplotype that lacks a change its allele has should not, unless the library's other allele carries that change, in which case it can't be tested.
+
+| Haplotype | Differs at | Libraries | Read support (median) | Clair3 agrees | Reading |
+| --- | --- | --- | --- | --- | --- |
+| O.01.83 | + c.189C>T, + c.220C>T | 6 | 0.98, 0.95 | 6/6, 6/6 | recurring haplotype not in ISBT (c.106, 188, 189, 220, 261del, 297) |
+| O.01.36 | lacks c.829G>A | 4 | 1.00 | 4/4 | recurring haplotype not in ISBT |
+| O.01.24 | + c.220C>T | 4 | 0.91 | 4/4 | recurring haplotype not in ISBT; O allele on a B background (includes the A1/O library of the disagreement review) |
+| O.16 | + c.189C>T, + c.220C>T (2 also c.259 deletion) | 5 | ≥0.98 | 5/5 | consistent, few libraries; O.16's deletion is not visible in exons 2–7 |
+| O.01.68 | lacks c.829G>A | 2 | 0.99 | 2/2 | consistent, few libraries |
+| O.01.02 | lacks c.681G>A | 2 | 1.00 | 2/2 | consistent, few libraries |
+| O.01.01 | + c.952G>T | 2 | 0.98 | not testable | the panel's c.952 row is G>A, not G>T |
+| A2.01 | c.811 deletion | 2 | 0.67 | not testable | 6-base homopolymer, below the 80% support needed for the flag: likely a sequencing artefact |
+
+Reading of the check:
+- **Three patterns are strong candidates:** O.01.83 + c.189T/c.220T, O.01.36 without c.829A and O.01.24 + c.220T. Each has at least 4 libraries, at least 90% read support, full agreement with Clair3 and no homopolymer context. Like c.595, they are candidates for the table of unlisted haplotypes once named and confirmed (for example by Sanger sequencing of one carrier each).
+- **The others stay REVIEW** until more carriers are seen.
+- **Added in 0.4.1:** the three strong candidates are now in the table, as `ABO*O.01.83[+c.189C>T;+c.220C>T]`, `ABO*O.01.36[-c.829G>A]` and `ABO*O.01.24[+c.220C>T]`. Replayed on the 0.4.0 run, they name 14 haplotypes and move 13 libraries from REVIEW to PASS (2,568 PASS, 208 REVIEW); the 14th has other flags too.
+
 
 **Overlap with the QAP set (S5):**
 - 103 of the 104 retrospective libraries from QAP donors are the QAP libraries themselves, with identical read counts. The QAP set is therefore not an independent check of this set.
@@ -314,6 +339,17 @@ So of the 4 confident disagreements, all 4 favour the read-level call:
 - 1 because only whole-read phasing shows that c.261del sits on the B-background allele.
 
 None of the 9 cases is a read-level typing error.
+
+**A2 alleles (read-level vs per-position, same 6,241 set):**
+
+| Finding | Libraries | Detail |
+| --- | --- | --- |
+| A2 in both | 309 | of 1,112 A carriers typed by both methods with the same genotype class |
+| A2 found only by read-level typing | 10 (all PASS) | A2.06 ×4 (3 donors; c.1061del alone defines it, the per-position rule also needs c.467), A2.05 ×1 (c.467T + c.1009A>G, no rule in the panel), A2.01 ×5 (Clair3 missed one of the two markers, the pileup and the reads show both) |
+| Per-position A2 reclassified as weak A | 3 (2 donors) | ABO\*AW.26: the A2.01 changes plus c.527G>A |
+| A2 in libraries only read-level typing could type | 24 (9 PASS) | A2.01; thin libraries (median 16 informative reads) where the per-position path withholds the A subgroup |
+
+Across the set, the read-level typer calls A2.01 348 times, A2.06 8 times and A2.05 once. In Supplementary_Data.xlsx these are sheets S1e (discordant libraries) and S1f (A2 findings), with de-identified sample tags.
 
 ## S7. Alleles the exon 2–7 assay cannot resolve
 

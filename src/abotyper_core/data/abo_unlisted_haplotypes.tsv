@@ -6,3 +6,6 @@
 # definition does not list all of its changes.
 called_allele	differs_at	report_as	phenotype	evidence
 ABO*O.01.68	c.595 C>T	ABO*O.01.12-like	O	O.01.68 changes (c.106,188,189,261del,297,646,681,771,829) plus c.595C>T, the change that defines ABO*O.01.12; ISBT lists O.01.12 without the exon 3-4 changes. 104 of 2,776 typed libraries of the retrospective set (Nov 2026); c.595C>T called by Clair3 in all 104; read support median 97%.
+ABO*O.01.83	c.189 C>T, c.220 C>T	ABO*O.01.83[+c.189C>T;+c.220C>T]	O	O.01.83 (c.106,188,261del,297) plus c.189C>T and c.220C>T. 6 libraries of the retrospective set (Nov 2026); read support median 98% and 95%; both changes called by Clair3 in all 6; no homopolymer at either site. Not an ISBT allele: unconfirmed by Sanger.
+ABO*O.01.36	c.829 A>G	ABO*O.01.36[-c.829G>A]	O	O.01.36 without its c.829G>A (reference G on the haplotype). 4 libraries of the retrospective set (Nov 2026); read support 100%; Clair3 does not call c.829G>A in any of the 4, whose other allele lacks it too. Not an ISBT allele: unconfirmed by Sanger.
+ABO*O.01.24	c.220 C>T	ABO*O.01.24[+c.220C>T]	O	O.01.24 (an O allele on a B background: c.261del with the B changes) plus c.220C>T. 4 libraries of the retrospective set (Nov 2026); read support median 91%; c.220C>T called by Clair3 in all 4. Not an ISBT allele: unconfirmed by Sanger.

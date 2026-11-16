@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 (2026-11-16)
+
+- Three more recurring haplotypes in `abo_unlisted_haplotypes.tsv`, each seen in 4-6 libraries of the
+  retrospective set with at least 90% read support and confirmed by Clair3 in every library:
+  `ABO*O.01.83[+c.189C>T;+c.220C>T]`, `ABO*O.01.36[-c.829G>A]` and `ABO*O.01.24[+c.220C>T]` (names say how the
+  haplotype differs from the ISBT allele; they are not ISBT names). They are reported with a note instead of
+  REVIEW.
+- `abotyper-aggregate`: a haplotype named from that table agrees with a per-position call of the ISBT allele it was
+  called as (for example `ABO*O.01.24` and `ABO*O.01.24[+c.220C>T]`, `ABO*O.01.68` and `ABO*O.01.12-like`), so it no
+  longer reads as "methods disagree".
+
 ## 0.4.0 (2026-11-16)
 
 Development versions 0.4.0.dev0 to 0.4.0.dev3 were published to TestPyPI for testing on nf-core/abotyper's

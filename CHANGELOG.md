@@ -1,9 +1,9 @@
 # Changelog
 
-## 0.4.0 (unreleased)
+## 0.4.0 (2026-11-16)
 
-Development versions 0.4.0.dev0 to 0.4.0.dev3 are on TestPyPI; nf-core/abotyper uses them on its read-level typing
-branch.
+Development versions 0.4.0.dev0 to 0.4.0.dev3 were published to TestPyPI for testing on nf-core/abotyper's
+read-level typing branch.
 
 - New command `abotyper-readtyper`: read-level typing. Every read of the exon 2-7 amplicon is scored against every
   ISBT ABO allele (error rates per SNV, homopolymer indel and other indel) and the allele pair that best explains all
@@ -32,7 +32,7 @@ branch.
   run, and two run-level files: `ABO_novel_variants.tsv` and `ABO_readtyping_mqc.tsv` (MultiQC). Read-level files
   are read from `<id>/read_typing/` or named in `--samples` (`readtyping`, `readtyping_haplotypes`).
 
-## 0.3.1 (unreleased)
+## 0.3.1 (2026-11-13)
 
 - `abotyper-aggregate` takes explicit inputs: with a header row, `--samples` can name each sample's files
   (columns `phenotype`, `haplotypes`, `evidence_status`, `concordance`, `coverage`, `stats`, `flagstat`,

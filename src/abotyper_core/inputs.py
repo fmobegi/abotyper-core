@@ -238,8 +238,12 @@ SAMPLE_FILE_COLUMNS = {
     "stats": "stats",                         # samtools stats
     "flagstat": "flagstat",                   # samtools flagstat
     "nanostats": "NanoStats.txt",             # NanoPlot
+    "readtyping": "ReadTyping.tsv",           # abotyper-readtyper --out
+    "readtyping_haplotypes": "ReadTypingHaplotypes.tsv",   # abotyper-readtyper --haplotypes-out
 }
-SAMPLE_TABLE_COLUMNS = ["id", "control", "sample", "barcode", *SAMPLE_FILE_COLUMNS]
+# files staged into <id>/read_typing/ (everything else goes to <id>/combined/)
+READ_TYPING_COLUMNS = {"readtyping", "readtyping_haplotypes"}
+SAMPLE_TABLE_COLUMNS = ["id", "control", "sample", "barcode", "expected", *SAMPLE_FILE_COLUMNS]
 
 
 def read_samples(path: Optional[str]) -> Dict[str, Dict[str, object]]:
@@ -283,7 +287,8 @@ def read_samples(path: Optional[str]) -> Dict[str, Dict[str, object]]:
         if barcode and not re.fullmatch(r"(barcode)?\d+", barcode, re.IGNORECASE):
             raise ValueError(f"{path} line {n}: barcode must be a number or barcode<number>, got '{barcode}'")
         files = {c: row[c] for c in SAMPLE_FILE_COLUMNS if row.get(c)}
-        samples[sample_id] = {"control": kind, "sample": name, "barcode": barcode, "files": files}
+        samples[sample_id] = {"control": kind, "sample": name, "barcode": barcode, "files": files,
+                              "expected": row.get("expected", "")}
     return samples
 
 
@@ -296,11 +301,11 @@ def stage_sample_files(samples: Dict[str, Dict[str, object]], root: str) -> int:
         files = row.get("files") or {}
         if not files:
             continue
-        d = os.path.join(root, sid, "combined")
-        os.makedirs(d, exist_ok=True)
         for col, src in files.items():
             if not os.path.isfile(src):
                 raise ValueError(f"sample {sid}: {col} file '{src}' does not exist")
+            d = os.path.join(root, sid, "read_typing" if col in READ_TYPING_COLUMNS else "combined")
+            os.makedirs(d, exist_ok=True)
             dst = os.path.join(d, f"{sid}.{SAMPLE_FILE_COLUMNS[col]}")
             try:
                 os.symlink(os.path.abspath(src), dst)

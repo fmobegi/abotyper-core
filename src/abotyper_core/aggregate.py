@@ -88,6 +88,8 @@ from .calling import GENOTYPE_TABLE, resolve_primary_genotype  # noqa: F401  (re
 from .inputs import (find_nanostats, parse_alignment_metrics, parse_coverage_file,  # noqa: F401
                         parse_evidence_status, parse_nanostats, read_controls, read_samples, stage_sample_files)
 from .phase import PhaseEvidence, parse_haplotypes_tsv
+from .reconcile import (EVIDENCE_COLUMNS, READ_TYPING_MAX_UNEXPLAINED, READ_TYPING_SUFFIX,  # noqa: F401
+                        ReconcileMixin)
 from .report import ReportMixin
 
 
@@ -136,7 +138,7 @@ def _process_one(filename):
 # ===========================================================================
 
 
-class ABOReportParser(CallingMixin, ReportMixin):
+class ABOReportParser(CallingMixin, ReconcileMixin, ReportMixin):
     """
     Collates all ABO phenotype results from each sample into a general table
     and generates an Excel worksheet and a CSV file for export to LIS soft
@@ -224,6 +226,11 @@ class ABOReportParser(CallingMixin, ReportMixin):
 
         self.notes_columns = ["ASubtype", "ReadReliability", "DepthCheck", "PhaseConfidence", "BwSubtype",
                               "A2Trace", "EvidenceBasis", "QCStatus", "QCFlags", "ReplicateNote"]
+        # read-level typing (abotyper-readtyper) is optional: its evidence columns appear only in runs that have
+        # it, so runs without it keep the same report layout
+        self.read_typing_enabled = self._detect_read_typing()
+        if self.read_typing_enabled:
+            self.notes_columns += EVIDENCE_COLUMNS
         header_cols += ["Notes"] * len(self.notes_columns)
 
         column_metrics = ["#Reads", "Mat", "Mis", "Ins", "Del", "A", "G", "C", "T", "Type"]
@@ -475,17 +482,26 @@ class ABOReportParser(CallingMixin, ReportMixin):
                     print(f"  Phase data ({exon_label}): {phase_evidence.total_reads} reads, "
                           f"{len(phase_evidence.haplotype_counts)} distinct haplotypes")
 
-            if not any_exon_found:
-                error_msg = "No exon phenotype files found (checked combined/ and all per-exon folders)"
+            has_read_typing = self.read_typing_enabled and self._read_typing_paths(sample_dir)[0] is not None
+            if not any_exon_found and not has_read_typing:
+                error_msg = ("No exon phenotype files found (checked combined/ and all per-exon folders) and no "
+                             "read-level typing")
                 print(f"Skipping file {filename}. {error_msg}.")
                 self.failed_samples.append({"sample": filename, "reason": error_msg})
                 return
 
-            result_df = self.assign_phenotype_genotype(
-                result_df, phase_evidence_by_exon=phase_evidence_by_exon,
-            )
-
-            self._record_sample_metrics(result_df, sample_name, barcode, sample_dir)
+            if any_exon_found:
+                result_df = self.assign_phenotype_genotype(
+                    result_df, phase_evidence_by_exon=phase_evidence_by_exon,
+                )
+                self._record_sample_metrics(result_df, sample_name, barcode, sample_dir)
+            else:
+                print("  No position-based typing for this sample: using the read-level typing")
+            key = (str(sample_name), int(str(barcode).replace("barcode", "")))
+            rt = None
+            if self.read_typing_enabled:
+                rt = self._reconcile(result_df, sample_dir, sample_name, key, any_exon_found)
+            self._apply_controls(result_df, rt, any_exon_found, filename)
 
             self.results.append(result_df)
             print(f"Successfully processed {filename}")
@@ -689,6 +705,8 @@ class ABOReportParser(CallingMixin, ReportMixin):
         final_df = final_df.sort_values(by=[("", "Sequencing_ID"), ("", "Barcode")], ascending=True)
         final_df = final_df.reset_index(drop=True)   # one-row frames all carried index 0
         self._apply_replicate_checks(final_df)
+        if self.read_typing_enabled:
+            self._apply_cross_sample_checks(final_df)
         return final_df
 
 
@@ -798,6 +816,9 @@ class ABOReportParser(CallingMixin, ReportMixin):
         print("-" * 336)
         self.save_results_to_file(final_df)
         self.write_evidence_summary(final_df)
+        if self.read_typing_enabled:
+            self.write_novel_variants(final_df)
+            self.write_read_typing_mqc(final_df)
 
         if self.failed_samples:
             print("\n\nFailed Samples Summary:")

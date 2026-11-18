@@ -114,6 +114,17 @@ The golden tests run every step on ten fixture samples and compare the outputs b
 with `tests/golden/`. After an intended output change, regenerate them with `UPDATE_GOLDEN=1 pytest` and review the
 diff. `tests/requirements-pinned.txt` lists the versions the golden files were made with.
 
+### Test data
+
+The files in `tests/fixtures/`, `tests/golden/` and `tests/readtyper/` come from reference cell lines with
+characterised ABO genotypes, sequenced while the laboratory assay was developed and shared with the supplier's
+agreement. They are not from donors or other research participants. They cover the ABO amplicon only:
+
+- variant calls, pileups and typing results for ten samples;
+- one 12-read BAM for the read-level typer.
+
+The nf-core/abotyper pipeline tests on simulated reads instead (nf-core/test-datasets, branch `abotyper`).
+
 ### Branches and releases
 
 - Open pull requests against `dev`, the default branch. CI (ruff and pytest on Python 3.11 and 3.13) must pass
